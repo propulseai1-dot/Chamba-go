@@ -1,0 +1,172 @@
+/* --- CONFIGURATION GLOBALE --- */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+
+:root {
+    --main-orange: #f97316;
+    --main-blue: #0ea5e9;
+    --bg-dark: #020617; /* Ton Slate-950 préféré */
+    --glass-bg: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.08);
+}
+
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+    background-color: black; /* Fond noir derrière le shell pour l'ordinateur */
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: white;
+}
+
+/* --- LE CONTAINER APP (SHELL) --- */
+.app-shell, .app-container {
+    max-width: 450px;
+    margin: 0 auto;
+    min-height: 100vh;
+    background: var(--bg-dark);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 100px rgba(0,0,0,0.8);
+}
+
+.hero-mesh {
+    background: 
+        radial-gradient(circle at 50% -10%, rgba(249, 115, 22, 0.12), transparent),
+        radial-gradient(circle at 0% 100%, rgba(14, 165, 233, 0.08), transparent);
+}
+
+.glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 2rem;
+}
+
+/* --- FORMULAIRES ET INPUTS (Optimisés Mobile) --- */
+.premium-input {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--glass-border);
+    border-radius: 1.25rem;
+    padding: 1.2rem 1.5rem; /* Padding augmenté pour le pouce */
+    width: 100%;
+    color: white;
+    outline: none;
+    text-align: center;
+    font-weight: 700;
+    font-size: 16px !important; /* EMPÊCHE LE ZOOM AUTOMATIQUE IOS */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.premium-input::placeholder {
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    opacity: 0.5;
+    text-transform: uppercase;
+}
+
+.premium-input:focus {
+    border-color: var(--main-orange);
+    background: rgba(249, 115, 22, 0.03);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(249, 115, 22, 0.05);
+}
+
+/* --- BOUTONS (Massifs et Lisibles) --- */
+.btn-primary, .btn-pro {
+    background: var(--main-orange);
+    color: black;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border-radius: 1.25rem;
+    padding: 1.2rem;
+    width: 100%;
+    transition: all 0.3s;
+    box-shadow: 0 10px 25px rgba(249, 115, 22, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px; /* Plus lisible */
+}
+
+.btn-primary:active, .btn-pro:active {
+    transform: scale(0.96);
+    filter: brightness(0.9);
+}
+
+/* --- SERVICE CARDS (Page Servicios) --- */
+.service-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--glass-border);
+    border-radius: 1.8rem;
+    padding: 2rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 140px;
+}
+
+.service-label {
+    font-size: 11px !important; /* Plus grand pour mobile */
+    font-weight: 900;
+    text-transform: uppercase;
+    color: white;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    margin-top: 10px;
+}
+
+/* --- ZONE PHOTO --- */
+.file-label {
+    border: 2px dashed rgba(255, 255, 255, 0.1);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+/* --- ANIMATIONS ET UTILITAIRES --- */
+.fade-in { 
+    animation: fadeIn 0.6s ease-out forwards; 
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.floating {
+    animation: floating 3s ease-in-out infinite;
+}
+
+@keyframes floating {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.no-scrollbar::-webkit-scrollbar { 
+    display: none; 
+}
+
+/* --- NAVIGATION BASSE (Si applicable) --- */
+nav {
+    max-width: 450px;
+    margin: 0 auto;
+}

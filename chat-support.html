@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-slate-950">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Soporte | CHAMBA GO</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root { --main-orange: #f97316; --bg-dark: #020617; }
+        
+        .app-container {
+            width: 100%; max-width: 450px; margin: 0 auto;
+            position: relative; height: 100vh;
+            display: flex; flex-direction: column; background: #020617;
+        }
+
+        .chat-messages {
+            flex: 1; overflow-y: auto; padding: 20px;
+            display: flex; flex-direction: column; gap: 12px;
+        }
+
+        /* BULLES DE MESSAGE */
+        .bubble { max-width: 85%; padding: 14px 18px; border-radius: 22px; font-size: 13px; line-height: 1.5; font-weight: 500; }
+        .bubble-me { align-self: flex-end; background: var(--main-orange); color: #000; border-bottom-right-radius: 4px; }
+        .bubble-them { align-self: flex-start; background: rgba(255,255,255,0.05); color: #fff; border-bottom-left-radius: 4px; border: 1px solid rgba(255,255,255,0.05); }
+
+        .support-card {
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.1) 0%, transparent 100%);
+            border: 1px solid rgba(249, 115, 22, 0.2);
+            padding: 15px; border-radius: 20px; margin-bottom: 10px;
+        }
+
+        .input-wrapper {
+            padding: 20px; background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px); border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .chat-input {
+            width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 18px; padding: 14px 50px 14px 18px;
+            color: white; outline: none; font-size: 13px;
+        }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .hero-mesh { background-image: radial-gradient(at 0% 0%, rgba(249, 115, 22, 0.08) 0, transparent 50%); }
+    </style>
+</head>
+<body class="h-full bg-black">
+
+    <div class="app-container hero-mesh">
+
+        <header class="px-6 py-10 flex items-center justify-between sticky top-0 z-50 backdrop-blur-lg bg-slate-950/80 border-b border-white/5">
+            <div class="flex items-center gap-4">
+                <div onclick="window.location.href='mensajes.html'" class="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center cursor-pointer active:scale-90">
+                    <i class="fa-solid fa-chevron-left text-xs text-white"></i>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center border border-white/10 shadow-[0_0_15px_rgba(249,115,22,0.3)]">
+                        <i class="fa-solid fa-headset text-black text-sm"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-sm font-black text-white uppercase italic tracking-tighter">Soporte Chamba GO</h2>
+                        <span class="flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+                            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Respuesta Inmediata</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="chat-messages no-scrollbar" id="chatContainer">
+            
+            <div class="support-card fade-in">
+                <p class="text-[10px] text-orange-500 font-black uppercase tracking-widest mb-1">Centro de Ayuda</p>
+                <p class="text-[12px] text-slate-300 leading-relaxed">Bienvenido al soporte oficial. Estamos aquí para ayudarte a encontrar la mejor chamba ou el mejor pro en la Riviera Maya.</p>
+            </div>
+
+            <div class="bubble bubble-them fade-in">
+                ¡Hola! ¿Cómo va tu experiencia con la app? 👋
+            </div>
+
+            <div class="bubble bubble-them fade-in" style="animation-delay: 0.2s">
+                Si tienes dudas sobre cómo realizar un pago o cómo contactar a un Pro, solo dímelo. ¡Estamos 24/7!
+            </div>
+
+            <div class="bubble bubble-me fade-in" style="animation-delay: 1s">
+                ¡Hola! Por ahora todo bien, la app está muy cool.
+            </div>
+
+        </main>
+
+        <div class="input-wrapper">
+            <div class="relative">
+                <input type="text" id="messageInput" placeholder="Pregunta algo al soporte..." class="chat-input">
+                <button onclick="sendMessage()" class="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-orange-500 rounded-xl flex items-center justify-center active:scale-90">
+                    <i class="fa-solid fa-paper-plane text-black text-xs"></i>
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const container = document.getElementById('chatContainer');
+            if (input.value.trim() !== "") {
+                const msg = document.createElement('div');
+                msg.className = 'bubble bubble-me';
+                msg.innerText = input.value;
+                container.appendChild(msg);
+                input.value = "";
+                container.scrollTop = container.scrollHeight;
+
+                // Petite réponse automatique du bot pour le fun
+                setTimeout(() => {
+                    const reply = document.createElement('div');
+                    reply.className = 'bubble bubble-them';
+                    reply.innerText = "¡Recibido! Un agente revisará tu mensaje en breve.";
+                    container.appendChild(reply);
+                    container.scrollTop = container.scrollHeight;
+                }, 1000);
+            }
+        }
+    </script>
+</body>
+</html>

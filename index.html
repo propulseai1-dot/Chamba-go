@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-slate-950">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>CHAMBA GO | Inicio</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root { --main-orange: #f97316; --bg-dark: #020617; }
+        .app-container { width: 100%; max-width: 450px; margin: 0 auto; position: relative; min-height: 100vh; display: flex; flex-direction: column; background: #020617; }
+        .hero-mesh { background-image: radial-gradient(at 0% 0%, rgba(249, 115, 22, 0.1) 0, transparent 50%), radial-gradient(at 100% 0%, rgba(249, 115, 22, 0.05) 0, transparent 50%); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .premium-input { width: 100%; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 1.2rem; padding: 1rem; color: white; outline: none; }
+        .glass-card { background: rgba(255,255,255,0.02); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05); border-radius: 2.5rem; }
+        
+        /* NAVIGATION */
+        .tab-bar-wrapper { position: fixed; bottom: 15px; width: 100%; max-width: 450px; padding: 0 15px; z-index: 1000; left: 50%; transform: translateX(-50%); }
+        .tab-bar { width: 100%; height: 75px; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.08); border-radius: 25px; display: grid; grid-template-columns: repeat(5, 1fr); align-items: center; box-shadow: 0 15px 35px rgba(0,0,0,0.5); position: relative; }
+        .tab-item { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #64748b; cursor: pointer; transition: all 0.3s; }
+        .tab-item.active { color: var(--main-orange); }
+        .plus-button { position: absolute; top: -30px; left: 50%; transform: translateX(-50%); width: 60px; height: 60px; background: var(--main-orange); border-radius: 20px; display: flex; align-items: center; justify-content: center; color: #000; font-size: 24px; border: 6px solid #020617; box-shadow: 0 10px 20px rgba(249, 115, 22, 0.3); z-index: 1100; }
+    </style>
+</head>
+<body class="h-full bg-slate-950"> 
+
+    <div class="app-container hero-mesh">
+        <header class="px-6 pt-12 pb-4 flex justify-between items-center sticky top-0 bg-slate-950/80 backdrop-blur-md z-50">
+            <h1 class="text-2xl font-black italic tracking-tighter text-white uppercase leading-none">
+                CHAMBA <span class="text-orange-500">GO</span>
+            </h1>
+            <div onclick="safeRedirect('perfil')" class="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center cursor-pointer active:scale-90 transition-transform">
+                <i class="fa-solid fa-user text-xs text-white"></i>
+            </div>
+        </header>
+
+        <main class="flex-1 overflow-y-auto px-6 pb-44 no-scrollbar">
+            
+            <div id="proWelcome" class="hidden mt-6 mb-8">
+                <h2 class="text-xs font-black text-slate-500 uppercase tracking-[0.3em] mb-1">Panel de Control</h2>
+                <p class="text-2xl font-black italic uppercase tracking-tighter">Hola, <span id="proName" class="text-orange-500">Pro</span></p>
+            </div>
+
+            <div id="searchBarSection" class="mt-4 mb-6">
+                <div class="relative">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
+                    <input type="text" placeholder="¿QUÉ NECESITAS HOY?" class="premium-input pl-10 text-[10px] uppercase tracking-widest" onclick="location.href='categorias.html'">
+                </div>
+            </div>
+
+            <div id="heroBanner" class="relative overflow-hidden p-8 mb-8 bg-orange-500 rounded-[2.5rem] shadow-xl cursor-pointer active:scale-95 transition-all">
+                <div class="relative z-10 text-black">
+                    <h2 id="heroTitle" class="text-3xl font-black leading-none mb-4 uppercase italic tracking-tighter text-black">¿DÓNDE ESTÁ EL <br>PROBLEMA?</h2>
+                    <div id="heroBadge" class="inline-flex items-center gap-2 bg-black text-white px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest">
+                        Pedir un Pro <i class="fa-solid fa-bolt text-orange-500"></i>
+                    </div>
+                </div>
+                <i id="heroIcon" class="fa-solid fa-person-digging absolute -right-4 -bottom-4 text-8xl text-black/10 rotate-12"></i>
+            </div>
+
+            <div id="proDashboard" class="hidden space-y-4 mb-10">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-white/5 border border-white/10 p-5 rounded-[2rem]">
+                        <p class="text-[8px] font-black text-slate-500 uppercase mb-2 tracking-widest">Ganancias Mes</p>
+                        <p class="text-xl font-black text-white">$12,450</p>
+                        <p class="text-[8px] text-green-500 font-bold mt-1">+12% vs ayer</p>
+                    </div>
+                    <div class="bg-white/5 border border-white/10 p-5 rounded-[2rem]">
+                        <p class="text-[8px] font-black text-slate-500 uppercase mb-2 tracking-widest">Jobs Listos</p>
+                        <p class="text-xl font-black text-white">24</p>
+                        <div class="flex gap-1 mt-2">
+                            <i class="fa-solid fa-star text-[8px] text-orange-500"></i>
+                            <i class="fa-solid fa-star text-[8px] text-orange-500"></i>
+                            <i class="fa-solid fa-star text-[8px] text-orange-500"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white/5 border border-white/10 p-6 rounded-[2.5rem] flex items-center justify-between">
+                    <div>
+                        <p class="text-[9px] font-black text-orange-500 uppercase tracking-widest">Estatus Actual</p>
+                        <p class="text-sm font-black italic uppercase text-white">Disponible para trabajar</p>
+                    </div>
+                    <div class="w-12 h-6 bg-green-500/20 rounded-full border border-green-500/30 flex items-center px-1">
+                        <div class="w-4 h-4 bg-green-500 rounded-full shadow-[0_0_10px_rgba(34,197,94,0.5)]"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-between px-2 mb-10 text-center">
+                <div><p class="text-lg font-black text-white leading-none">500+</p><p class="text-[7px] font-bold text-slate-500 uppercase mt-1">Pros Verificados</p></div>
+                <div class="h-8 w-[1px] bg-white/10 mt-1"></div>
+                <div><p class="text-lg font-black text-white leading-none">15 min</p><p class="text-[7px] font-bold text-slate-500 uppercase mt-1">Respuesta</p></div>
+                <div class="h-8 w-[1px] bg-white/10 mt-1"></div>
+                <div><p class="text-lg font-black text-white leading-none">4.9/5</p><p class="text-[7px] font-bold text-slate-500 uppercase mt-1">Calificación</p></div>
+            </div>
+
+            <div id="proCTA" class="glass-card p-8 border-orange-500/20 mb-10 relative overflow-hidden">
+                <h3 class="text-lg font-black text-white uppercase italic leading-none">¿Quieres ganar <br><span class="text-orange-500 text-2xl">dinero?</span></h3>
+                <button onclick="location.href='registro-pro.html'" class="w-full bg-white/5 border border-white/10 text-white text-[10px] font-black py-4 rounded-2xl uppercase mt-6 tracking-widest active:scale-95 transition-all">
+                    Ser un PRO Profesional
+                </button>
+            </div>
+        </main>
+
+        <div class="tab-bar-wrapper">
+            <nav class="tab-bar">
+                <div class="tab-item active" onclick="location.href='index.html'">
+                    <i class="fa-solid fa-house text-xl"></i>
+                    <span class="text-[8px] font-black uppercase italic">Inicio</span>
+                </div>
+                <div id="dynamicNavBtn" class="tab-item"></div>
+                <div class="relative flex justify-center items-center">
+                    <div onclick="safeRedirect('solicitar')" class="plus-button">
+                        <i class="fa-solid fa-plus text-black"></i>
+                    </div>
+                </div>
+                <div class="tab-item" onclick="safeRedirect('mensajes')">
+                    <i class="fa-solid fa-comment text-xl"></i>
+                    <span class="text-[8px] font-black uppercase italic">Chat</span>
+                </div>
+                <div class="tab-item" onclick="safeRedirect('perfil')">
+                    <i class="fa-solid fa-user text-xl"></i>
+                    <span class="text-[8px] font-black uppercase italic">Perfil</span>
+                </div>
+            </nav>
+        </div>
+    </div>
+
+    <script>
+        const _supabase = supabase.createClient('https://thjzjwyosyxsgjfcignp.supabase.co', 'sb_publishable_ugM18BI_W0G-pu-mY-0a7g_omiUa7rT');
+
+        async function syncRoleUI() {
+            const phone = localStorage.getItem('userPhone');
+            const dynamicBtn = document.getElementById('dynamicNavBtn');
+            
+            if (!phone) {
+                // Client non-connecté
+                showClientUI(dynamicBtn);
+                return;
+            }
+
+            try {
+                const { data: user, error } = await _supabase.from('users').select('role, name').eq('phone', phone).maybeSingle();
+                
+                if (user && (user.role === 'pro' || user.role === 'jobber')) {
+                    showProUI(user.name, dynamicBtn);
+                } else {
+                    showClientUI(dynamicBtn);
+                }
+            } catch (err) {
+                showClientUI(dynamicBtn);
+            }
+        }
+
+        function showProUI(name, dynamicBtn) {
+            document.getElementById('proWelcome').classList.remove('hidden');
+            document.getElementById('proDashboard').classList.remove('hidden');
+            document.getElementById('proName').innerText = name;
+            document.getElementById('searchBarSection').classList.add('hidden');
+            document.getElementById('proCTA').classList.add('hidden');
+            
+            const hero = document.getElementById('heroBanner');
+            document.getElementById('heroTitle').innerHTML = "CHAMBAS <br>CERCA DE TI";
+            document.getElementById('heroBadge').innerHTML = 'Ver Marketplace <i class="fa-solid fa-arrow-right ml-1"></i>';
+            document.getElementById('heroIcon').className = "fa-solid fa-briefcase absolute -right-4 -bottom-4 text-8xl text-black/10 rotate-12";
+            hero.onclick = () => location.href = 'marketplace.html';
+
+            dynamicBtn.innerHTML = `
+                <div onclick="location.href='marketplace.html'" class="flex flex-col items-center">
+                    <i class="fa-solid fa-briefcase text-xl text-orange-500"></i>
+                    <span class="text-[8px] font-black uppercase italic text-orange-500">Chambas</span>
+                </div>`;
+        }
+
+        function showClientUI(dynamicBtn) {
+            dynamicBtn.innerHTML = `
+                <div onclick="location.href='categorias.html'" class="flex flex-col items-center">
+                    <i class="fa-solid fa-compass text-xl"></i>
+                    <span class="text-[8px] font-black uppercase italic">Explorar</span>
+                </div>`;
+        }
+
+        // --- ANTI-BOUCLE REDIRECTION ---
+        function safeRedirect(target) {
+            const phone = localStorage.getItem('userPhone');
+            if (!phone) {
+                // Si pas de tel, on va direct au login sans passer par le profil
+                window.location.href = 'login.html';
+            } else {
+                window.location.href = target + '.html';
+            }
+        }
+
+        window.onload = syncRoleUI;
+    </script>
+</body>
+</html>

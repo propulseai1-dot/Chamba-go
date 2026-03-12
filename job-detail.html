@@ -1,0 +1,84 @@
+<div class="fixed bottom-10 left-0 w-full px-6 max-w-sm left-1/2 -translate-x-1/2">
+    <button id="applyBtn" onclick="applyToJob()" class="w-full bg-orange-500 text-black font-black py-5 rounded-[1.8rem] uppercase italic tracking-tighter flex items-center justify-center gap-3 shadow-[0_10px_30px_rgba(249,115,22,0.3)]">
+        <i class="fa-solid fa-paper-plane"></i>
+        Postularme a esta misión
+    </button>
+</div>
+
+<script>
+    const _supabase = supabase.createClient('https://thjzjwyosyxsgjfcignp.supabase.co', 'sb_publishable_ugM18BI_W0G-pu-mY-0a7g_omiUa7rT');
+    
+    let currentJobId = "";
+
+    async function loadJobDetails() {
+        const urlParams = new URLSearchParams(window.location.search);
+        currentJobId = urlParams.get('id');
+
+        if (!currentJobId) { window.location.href = 'marketplace.html'; return; }
+
+        const { data: job } = await _supabase.from('jobs').select('*').eq('id', currentJobId).maybeSingle();
+
+        if (job) {
+            document.getElementById('jobTitle').innerText = job.title;
+            document.getElementById('jobDesc').innerText = job.description;
+            document.getElementById('jobPrice').innerText = `$${job.price}`;
+            document.getElementById('jobCategory').innerText = job.category;
+            document.getElementById('jobLocation').innerText = job.location;
+            document.getElementById('jobDate').innerText = new Date(job.created_at).toLocaleDateString();
+            
+            document.getElementById('loader').classList.add('hidden');
+            document.getElementById('mainContent').classList.remove('hidden');
+            
+            checkIfAlreadyApplied();
+        }
+    }
+
+    async function checkIfAlreadyApplied() {
+        const proPhone = localStorage.getItem('userPhone');
+        const { data } = await _supabase
+            .from('applications')
+            .select('*')
+            .eq('job_id', currentJobId)
+            .eq('pro_phone', proPhone)
+            .maybeSingle();
+        
+        if (data) {
+            const btn = document.getElementById('applyBtn');
+            btn.innerText = "Ya postulado ✅";
+            btn.disabled = true;
+            btn.classList.replace('bg-orange-500', 'bg-slate-800');
+            btn.classList.add('text-slate-500');
+        }
+    }
+
+    async function applyToJob() {
+        const proPhone = localStorage.getItem('userPhone');
+        const btn = document.getElementById('applyBtn');
+        
+        btn.innerText = "Enviando...";
+        btn.disabled = true;
+
+        // On récupère le nom du pro pour que le client sache qui postule
+        const { data: user } = await _supabase.from('users').select('name').eq('phone', proPhone).maybeSingle();
+
+        const { error } = await _supabase.from('applications').insert([
+            { 
+                job_id: currentJobId, 
+                pro_phone: proPhone,
+                pro_name: user ? user.name : 'Pro Anónimo'
+            }
+        ]);
+
+        if (!error) {
+            alert("¡Postulación enviada! El cliente revisará tu perfil.");
+            btn.innerText = "Postulación enviada ✅";
+            btn.classList.replace('bg-orange-500', 'bg-green-500');
+        } else {
+            alert("Error al postular: " + error.message);
+            btn.disabled = false;
+            btn.innerText = "Postularme a esta misión";
+        }
+    }
+
+    window.onload = loadJobDetails;
+</script>

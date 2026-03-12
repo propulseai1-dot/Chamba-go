@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-slate-950">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>CHAMBA GO | Mis Pedidos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+        
+        :root { --main-orange: #f97316; --bg-dark: #020617; }
+        
+        body { 
+            background-color: var(--bg-dark); 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            color: white; 
+            margin: 0;
+        }
+
+        /* --- CONTAINER APP (MAX 450PX) --- */
+        .app-shell {
+            max-width: 450px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: var(--bg-dark);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 100px rgba(0,0,0,0.5);
+            border-left: 1px solid rgba(255,255,255,0.05);
+            border-right: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .hero-mesh { 
+            background: 
+                radial-gradient(circle at 50% -20%, #f9731615, transparent),
+                radial-gradient(circle at 0% 50%, #0ea5e910, transparent);
+        }
+
+        .glass-card { 
+            background: rgba(255, 255, 255, 0.03); 
+            backdrop-filter: blur(15px); 
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+            border-radius: 1.5rem;
+        }
+
+        .status-badge {
+            font-size: 8px;
+            font-weight: 900;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: 2rem;
+            letter-spacing: 0.1em;
+        }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="h-full">
+
+    <div class="app-shell hero-mesh p-6">
+        
+        <header class="py-6 flex justify-between items-center">
+            <button onclick="window.location.href='index.html'" class="w-12 h-12 flex items-center justify-center bg-white/5 rounded-2xl border border-white/10 active:scale-90 transition-all">
+                <i class="fa-solid fa-house text-slate-400"></i>
+            </button>
+            <h1 class="text-xl font-black italic text-orange-500 uppercase tracking-tighter">MIS PEDIDOS</h1>
+            <button onclick="logout()" class="w-12 h-12 flex items-center justify-center bg-white/5 rounded-2xl border border-white/10 active:scale-90 transition-all">
+                <i class="fa-solid fa-power-off text-red-500/50"></i>
+            </button>
+        </header>
+
+        <div id="missionsList" class="space-y-4 mt-8 flex-grow overflow-y-auto no-scrollbar pb-24">
+            <div class="py-20 text-center opacity-20">
+                <i class="fa-solid fa-circle-notch animate-spin text-2xl mb-4 block"></i>
+                <p class="font-black uppercase text-[10px] tracking-widest">Sincronizando...</p>
+            </div>
+        </div>
+
+        <div class="absolute bottom-6 left-6 right-6">
+            <button onclick="window.location.href='crear-mision.html'" class="w-full bg-orange-500 py-5 rounded-2xl shadow-2xl shadow-orange-500/30 flex items-center justify-center gap-3 active:scale-95 transition-all text-black">
+                <span class="font-black uppercase text-xs tracking-widest">Nueva Solicitud</span>
+                <i class="fa-solid fa-plus"></i>
+            </button>
+        </div>
+
+    </div> <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = 'https://thjzjwyosyxsgjfcignp.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_ugM18BI_W0G-pu-mY-0a7g_omiUa7rT';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        const userPhone = localStorage.getItem('userPhone');
+
+        async function loadMissions() {
+            const list = document.getElementById('missionsList');
+            
+            if (!userPhone) {
+                list.innerHTML = `<div class="p-6 glass-card text-center"><p class="text-[10px] font-black uppercase text-orange-500">Sesión no encontrada</p></div>`;
+                return;
+            }
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('missions')
+                    .select('*')
+                    .eq('client_phone', userPhone)
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                if (!data || data.length === 0) {
+                    list.innerHTML = `
+                        <div class="py-16 text-center glass-card border-dashed bg-transparent">
+                            <i class="fa-solid fa-box-open text-slate-700 text-3xl mb-4 block"></i>
+                            <p class="opacity-30 font-black uppercase text-[9px] tracking-widest">No hay pedidos registrados</p>
+                        </div>`;
+                } else {
+                    list.innerHTML = data.map(m => `
+                        <div class="glass-card p-6 border-l-4 ${m.status === 'open' ? 'border-orange-500' : 'border-cyan-400'}">
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="status-badge ${m.status === 'open' ? 'bg-orange-500/10 text-orange-500' : 'bg-cyan-500/10 text-cyan-400'}">
+                                    ${m.status === 'open' ? 'Buscando Pro' : 'En curso'}
+                                </span>
+                                <span class="text-white font-black italic tracking-tighter text-lg">$${m.price}</span>
+                            </div>
+                            <p class="text-sm font-bold text-slate-300 leading-tight mb-4 italic">"${m.description}"</p>
+                            
+                            ${m.status === 'in_progress' ? `
+                                <button onclick="window.location.href='chat.html?id=${m.id}'" class="w-full bg-white text-black py-3 rounded-xl font-black uppercase text-[10px] flex items-center justify-center gap-2 tracking-widest">
+                                    <i class="fa-solid fa-comment-dots"></i> Chat con Pro
+                                </button>
+                            ` : ''}
+                        </div>
+                    `).join('');
+                }
+            } catch (e) {
+                list.innerHTML = `<div class="p-6 glass-card text-red-500 text-[10px] font-black uppercase text-center">Error de conexión</div>`;
+            }
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'login.html';
+        }
+
+        window.onload = loadMissions;
+    </script>
+</body>
+</html>

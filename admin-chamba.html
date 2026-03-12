@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHAMBA GO | Super Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+        
+        :root { --main-orange: #f97316; --bg-dark: #020617; }
+        
+        body { 
+            background-color: var(--bg-dark); 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            color: white; 
+            margin: 0;
+            background: 
+                radial-gradient(circle at 0% 0%, #f9731615, transparent 40%),
+                radial-gradient(circle at 100% 100%, #0ea5e910, transparent 40%);
+        }
+
+        .glass-panel { 
+            background: rgba(255, 255, 255, 0.02); 
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05); 
+            border-radius: 2rem; 
+        }
+
+        .nav-btn { 
+            color: #64748b; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            border-radius: 1rem; 
+            position: relative;
+        }
+        
+        .nav-btn.active { 
+            color: var(--main-orange);
+            background: rgba(249, 115, 22, 0.1);
+        }
+
+        .nav-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 25%; right: 25%;
+            height: 2px; background: var(--main-orange);
+            border-radius: 2px;
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: slideUp 0.4s ease-out; }
+
+        @keyframes slideUp { 
+            from { opacity: 0; transform: translateY(20px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+
+        #loginOverlay { backdrop-filter: blur(40px); z-index: 9999; transition: 0.5s; }
+        
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        
+        input { transition: all 0.3s; }
+        input:focus { border-color: var(--main-orange) !important; background: rgba(255,255,255,0.08) !important; }
+    </style>
+</head>
+<body class="min-h-full">
+
+    <div id="loginOverlay" class="fixed inset-0 bg-black/80 flex items-center justify-center p-6">
+        <div class="w-full max-w-sm glass-panel p-10 text-center border-orange-500/20">
+            <div class="w-16 h-16 bg-orange-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <i class="fa-solid fa-shield-halved text-2xl text-orange-500"></i>
+            </div>
+            <h2 class="text-2xl font-black italic mb-2 uppercase tracking-tighter">Admin <span class="text-orange-500">Access</span></h2>
+            <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-8 text-center">Solo personal autorizado</p>
+            
+            <div class="space-y-3 mb-8">
+                <input type="text" id="adminUser" placeholder="Usuario" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl text-sm outline-none">
+                <input type="password" id="adminPass" placeholder="Contraseña" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl text-sm outline-none">
+            </div>
+            
+            <button onclick="checkLogin()" class="w-full bg-orange-500 text-black py-4 rounded-2xl font-black uppercase text-[10px] tracking-[0.2em] active:scale-95 transition-all shadow-lg shadow-orange-500/20">
+                Identificarse
+            </button>
+        </div>
+    </div>
+
+    <div id="adminMain" class="max-w-7xl mx-auto hidden p-6 lg:p-12">
+        
+        <header class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-12 gap-6">
+            <div>
+                <h1 class="text-4xl font-black italic uppercase tracking-tighter leading-none">
+                    CHAMBA <span class="text-orange-500">CONTROL</span>
+                </h1>
+                <div class="flex items-center gap-2 mt-2">
+                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                    <p class="text-[10px] font-black uppercase text-slate-500 tracking-[0.3em]">System Monitoring Online</p>
+                </div>
+            </div>
+
+            <nav class="flex gap-1 bg-white/5 p-1.5 rounded-[1.5rem] border border-white/10">
+                <button onclick="switchTab('stats', this)" class="nav-btn active px-6 py-3 text-[10px] font-black uppercase tracking-widest">Stats</button>
+                <button onclick="switchTab('pros', this)" class="nav-btn px-6 py-3 text-[10px] font-black uppercase tracking-widest">Pros</button>
+                <button onclick="switchTab('missions', this)" class="nav-btn px-6 py-3 text-[10px] font-black uppercase tracking-widest">Misiones</button>
+                <button onclick="switchTab('chats', this)" class="nav-btn px-6 py-3 text-[10px] font-black uppercase tracking-widest">Chats</button>
+            </nav>
+        </header>
+
+        <div id="stats" class="tab-content active">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                <div class="glass-panel p-8">
+                    <p class="text-[10px] font-black text-slate-500 uppercase mb-4 italic tracking-widest">Flujo de Dinero</p>
+                    <p id="statMoney" class="text-4xl font-black text-orange-500 tracking-tighter">$0</p>
+                </div>
+                <div class="glass-panel p-8">
+                    <p class="text-[10px] font-black text-slate-500 uppercase mb-4 italic tracking-widest">Misiones Activas</p>
+                    <p id="statMissions" class="text-4xl font-black text-white tracking-tighter">0</p>
+                </div>
+                <div class="glass-panel p-8">
+                    <p class="text-[10px] font-black text-slate-500 uppercase mb-4 italic tracking-widest">Total Pros</p>
+                    <p id="statPros" class="text-4xl font-black text-white tracking-tighter">0</p>
+                </div>
+                <div class="glass-panel p-8">
+                    <p class="text-[10px] font-black text-red-500 uppercase mb-4 italic tracking-widest">Baneados</p>
+                    <p id="statBanned" class="text-4xl font-black text-red-500 tracking-tighter">0</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="pros" class="tab-content">
+            <div class="flex items-center justify-between mb-8">
+                <h2 class="text-xl font-black uppercase italic tracking-tighter">Gestión de Talento</h2>
+            </div>
+            <div id="prosList" class="grid gap-4"></div>
+        </div>
+
+        <div id="missions" class="tab-content">
+            <h2 class="text-xl font-black uppercase italic tracking-tighter mb-8">Log de Misiones</h2>
+            <div class="overflow-hidden glass-panel border border-white/10">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-[11px]">
+                        <thead class="bg-white/5 text-slate-500 uppercase font-black">
+                            <tr>
+                                <th class="p-6">ID</th>
+                                <th class="p-6">Cliente</th>
+                                <th class="p-6">Pro</th>
+                                <th class="p-6">Precio</th>
+                                <th class="p-6">Status</th>
+                                <th class="p-6 text-right">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="missionsTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="chats" class="tab-content">
+            <h2 class="text-xl font-black uppercase italic tracking-tighter mb-8">Auditoría Live</h2>
+            <div id="chatsList" class="grid gap-4"></div>
+        </div>
+
+    </div>
+
+    <div id="docModal" class="fixed inset-0 bg-black/95 z-[10000] hidden flex flex-col items-center justify-center p-6">
+        <div class="glass-panel p-2 relative max-w-4xl">
+            <img id="modalImg" src="" class="max-h-[80vh] rounded-2xl shadow-2xl">
+            <button onclick="closeModal()" class="absolute -top-4 -right-4 w-12 h-12 bg-white text-black rounded-full flex items-center justify-center font-black shadow-xl">X</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = 'https://thjzjwyosyxsgjfcignp.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_ugM18BI_W0G-pu-mY-0a7g_omiUa7rT';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        function checkLogin() {
+            const u = document.getElementById('adminUser').value;
+            const p = document.getElementById('adminPass').value;
+            if (u === 'admin' && p === 'chambago2026') {
+                document.getElementById('loginOverlay').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('loginOverlay').classList.add('hidden');
+                    document.getElementById('adminMain').classList.remove('hidden');
+                    refreshData();
+                }, 500);
+            } else { alert("Acceso Denegado"); }
+        }
+
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            btn.classList.add('active');
+            refreshData();
+        }
+
+        async function refreshData() {
+            const { data: mData } = await supabaseClient.from('missions').select('*');
+            const { data: pData } = await supabaseClient.from('profiles').select('*');
+            
+            if(mData) {
+                const total = mData.reduce((acc, curr) => acc + (Number(curr.price) || 0), 0);
+                document.getElementById('statMoney').innerText = `$${total}`;
+                document.getElementById('statMissions').innerText = mData.length;
+                document.getElementById('statPros').innerText = pData.length;
+                document.getElementById('statBanned').innerText = pData.filter(p => p.status === 'banned').length;
+            }
+
+            // PROS
+            document.getElementById('prosList').innerHTML = pData?.map(p => `
+                <div class="glass-panel p-6 flex flex-col md:flex-row justify-between items-center gap-6 ${p.status === 'banned' ? 'opacity-30' : ''}">
+                    <div class="flex items-center gap-6 w-full">
+                        <img src="${p.avatar_url || 'https://via.placeholder.com/100'}" class="w-16 h-16 rounded-2xl object-cover border border-white/10 shadow-lg">
+                        <div>
+                            <p class="font-black text-lg italic uppercase tracking-tighter">${p.full_name}</p>
+                            <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">${p.phone} • ${p.role}</p>
+                            <span class="text-[8px] px-2 py-0.5 bg-white/5 rounded-full border border-white/10 text-orange-500 font-bold uppercase mt-2 inline-block">
+                                ${p.verification_status}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="flex gap-2 w-full md:w-auto">
+                        <button onclick="viewID('${p.phone}')" class="flex-1 bg-white/5 px-6 py-4 rounded-xl text-[9px] font-black uppercase hover:bg-white/10">Ver ID</button>
+                        <button onclick="updateUser('${p.phone}', 'verified')" class="flex-1 bg-green-500/20 text-green-500 px-6 py-4 rounded-xl text-[9px] font-black uppercase hover:bg-green-500 hover:text-black">Validar</button>
+                        <button onclick="banUser('${p.phone}')" class="flex-1 bg-red-500 text-white px-6 py-4 rounded-xl text-[9px] font-black uppercase shadow-lg shadow-red-500/20">Ban</button>
+                    </div>
+                </div>
+            `).join('') || '';
+
+            // MISSIONS
+            document.getElementById('missionsTable').innerHTML = mData?.map(m => `
+                <tr class="border-t border-white/5 hover:bg-white/[0.02] transition-colors">
+                    <td class="p-6 text-slate-500 italic font-medium">#${m.id.slice(0,5)}</td>
+                    <td class="p-6 font-bold uppercase text-[10px]">${m.client_name || '---'}</td>
+                    <td class="p-6 font-bold uppercase text-[10px] text-orange-400">${m.pro_name || 'Buscando...'}</td>
+                    <td class="p-6 font-black text-sm">$${m.price}</td>
+                    <td class="p-6"><span class="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[8px] font-black uppercase">${m.status}</span></td>
+                    <td class="p-6 text-right">
+                        <button onclick="cancelMission('${m.id}')" class="w-10 h-10 rounded-full bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all"><i class="fa-solid fa-xmark"></i></button>
+                    </td>
+                </tr>
+            `).join('') || '';
+        }
+
+        async function banUser(phone) {
+            if(!confirm("¿Banear permanentemente?")) return;
+            await supabaseClient.from('profiles').update({ status: 'banned' }).eq('phone', phone);
+            refreshData();
+        }
+
+        async function updateUser(phone, status) {
+            await supabaseClient.from('profiles').update({ verification_status: status, verified: true }).eq('phone', phone);
+            refreshData();
+        }
+
+        async function viewID(phone) {
+            const { data } = await supabaseClient.storage.from('documents').list('', { search: phone });
+            if (data && data.length > 0) {
+                const { data: { publicUrl } } = supabaseClient.storage.from('documents').getPublicUrl(data[0].name);
+                document.getElementById('modalImg').src = publicUrl;
+                document.getElementById('docModal').classList.remove('hidden');
+            } else { alert("No hay documento"); }
+        }
+
+        function closeModal() { document.getElementById('docModal').classList.add('hidden'); }
+    </script>
+</body>
+</html>

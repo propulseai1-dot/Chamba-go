@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-slate-950">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>CHAMBA GO | Nueva Chamba</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+        
+        :root { --main-orange: #f97316; --bg-dark: #020617; }
+        
+        body { 
+            background-color: var(--bg-dark); 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            color: white; 
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        /* --- CONTAINER APP (MAX 450PX) --- */
+        .app-shell {
+            max-width: 450px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: var(--bg-dark);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 100px rgba(0,0,0,0.5);
+            border-left: 1px solid rgba(255,255,255,0.05);
+            border-right: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .hero-mesh { 
+            background: 
+                radial-gradient(circle at 50% -20%, #f9731615, transparent),
+                radial-gradient(circle at 0% 50%, #0ea5e910, transparent);
+        }
+
+        .glass-panel { 
+            background: rgba(255, 255, 255, 0.03); 
+            backdrop-filter: blur(15px); 
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+            border-radius: 2rem;
+        }
+
+        input, textarea {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        input:focus, textarea:focus {
+            background: rgba(255, 255, 255, 0.08) !important;
+            border-color: var(--main-orange) !important;
+            box-shadow: 0 0 20px rgba(249, 115, 22, 0.1);
+        }
+
+        /* Animation d'apparition */
+        .fade-in { animation: fadeIn 0.6s ease-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="h-full">
+
+    <div class="app-shell hero-mesh p-6">
+        
+        <header class="py-6 flex items-center gap-4 mb-8">
+            <button onclick="history.back()" class="w-12 h-12 flex items-center justify-center bg-white/5 rounded-2xl border border-white/10 active:scale-90 transition-all">
+                <i class="fa-solid fa-chevron-left text-slate-400"></i>
+            </button>
+            <h1 class="text-xl font-black italic text-orange-500 uppercase tracking-tighter leading-none">
+                NUEVA <span class="text-white">CHAMBA</span>
+            </h1>
+        </header>
+
+        <div class="glass-panel p-8 space-y-8 fade-in">
+            
+            <div class="space-y-4">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-pen-nib text-orange-500 text-[10px]"></i>
+                    <label class="text-[10px] font-black uppercase text-slate-500 tracking-[0.2em] italic">¿Qué necesitas?</label>
+                </div>
+                <textarea id="descInput" placeholder="Ej: Necesito un plomero para una fuga en Playa del Carmen..." 
+                    class="w-full bg-white/5 border border-white/10 rounded-2xl p-5 text-sm text-white outline-none min-h-[140px] resize-none leading-relaxed shadow-inner"></textarea>
+            </div>
+
+            <div class="space-y-4">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-hand-holding-dollar text-orange-500 text-[10px]"></i>
+                    <label class="text-[10px] font-black uppercase text-slate-500 tracking-[0.2em] italic">Presupuesto (MXN)</label>
+                </div>
+                <div class="relative">
+                    <span class="absolute left-5 top-1/2 -translate-y-1/2 text-orange-500 font-black">$</span>
+                    <input type="number" id="priceInput" placeholder="500" 
+                        class="w-full bg-white/5 border border-white/10 rounded-2xl p-5 pl-10 text-white outline-none font-black text-lg">
+                </div>
+            </div>
+
+            <div class="pt-4">
+                <button id="submitBtn" onclick="publicarMision()" class="w-full bg-orange-500 py-5 rounded-2xl shadow-2xl shadow-orange-500/30 font-black uppercase text-xs text-black active:scale-95 transition-all flex items-center justify-center gap-3">
+                    Publicar Ahora <i class="fa-solid fa-bolt text-black"></i>
+                </button>
+                <p class="text-center text-[8px] text-slate-600 uppercase font-black tracking-widest mt-6">
+                    <i class="fa-solid fa-shield-check mr-1"></i> Publicación protegida por CHAMBA GO
+                </p>
+            </div>
+        </div>
+
+        <footer class="mt-12 text-center opacity-20">
+            <p class="text-[8px] font-black uppercase tracking-[0.5em]">Tulum • Playa del Carmen • Cancún</p>
+        </footer>
+
+    </div> <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = 'https://thjzjwyosyxsgjfcignp.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_ugM18BI_W0G-pu-mY-0a7g_omiUa7rT';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        async function publicarMision() {
+            const btn = document.getElementById('submitBtn');
+            const desc = document.getElementById('descInput').value.trim();
+            const price = document.getElementById('priceInput').value.trim();
+            const phone = localStorage.getItem('userPhone');
+
+            if (!desc || !price) {
+                alert("Por favor, llena todos los campos.");
+                return;
+            }
+            if (!phone) {
+                alert("Error: Sesión no encontrada.");
+                window.location.href = 'login.html';
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = "Publicando... <i class='fa-solid fa-spinner animate-spin'></i>";
+            btn.classList.replace('bg-orange-500', 'bg-orange-900');
+
+            try {
+                const { error } = await supabaseClient
+                    .from('missions')
+                    .insert([
+                        { 
+                            description: desc, 
+                            price: parseInt(price), 
+                            client_phone: phone, 
+                            status: 'open' 
+                        }
+                    ]);
+
+                if (error) throw error;
+
+                // Succès -> Retour aux missions
+                window.location.href = 'mis-pedidos.html';
+
+            } catch (err) {
+                console.error("Error:", err);
+                alert("Error al publicar: " + err.message);
+                btn.disabled = false;
+                btn.innerHTML = "Publicar Ahora <i class='fa-solid fa-bolt'></i>";
+                btn.classList.replace('bg-orange-900', 'bg-orange-500');
+            }
+        }
+    </script>
+</body>
+</html>

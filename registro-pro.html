@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-slate-950">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>CHAMBA GO | Registro Pro</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root { --main-orange: #f97316; }
+        .hero-mesh { 
+            background-image: radial-gradient(at 0% 0%, rgba(249, 115, 22, 0.12) 0, transparent 50%), 
+                              radial-gradient(at 100% 0%, rgba(249, 115, 22, 0.05) 0, transparent 50%);
+        }
+        .app-shell {
+            width: 100%; max-width: 450px; margin: 0 auto;
+            min-height: 100vh; display: flex; flex-direction: column;
+            background: #020617; position: relative;
+        }
+        .glass-card {
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 2.5rem;
+        }
+        .premium-input {
+            width: 100%; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 1.2rem; padding: 1.1rem; color: white; outline: none;
+            font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+        .premium-input:focus { border-color: var(--main-orange); background: rgba(255,255,255,0.06); }
+        
+        .btn-pro {
+            width: 100%; background: var(--main-orange); color: black;
+            padding: 1.2rem; border-radius: 1.2rem; font-weight: 900;
+            text-transform: uppercase; display: flex; align-items: center;
+            justify-content: center; gap: 10px; transition: all 0.2s;
+        }
+        .btn-pro:active { transform: scale(0.95); }
+
+        .file-label {
+            display: flex; flex-direction: column; align-items: center;
+            padding: 2rem; border: 2px dashed rgba(255,255,255,0.1);
+            border-radius: 2rem; cursor: pointer; transition: all 0.3s;
+        }
+        .fade-in { animation: fadeIn 0.6s ease-out forwards; opacity: 0; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="h-full bg-slate-950">
+
+    <div class="app-shell hero-mesh p-8 flex flex-col">
+        
+        <header class="mb-10 text-center fade-in">
+            <div onclick="window.location.href='index.html'" class="w-10 h-10 glass-card flex items-center justify-center cursor-pointer mb-6 mx-auto active:scale-90 transition-transform">
+                <i class="fa-solid fa-arrow-left text-xs text-white"></i>
+            </div>
+            <h1 class="text-4xl font-black italic tracking-tighter uppercase leading-none text-white">
+                ÚNETE COMO <span class="text-orange-500">PRO</span>
+            </h1>
+            <p class="text-slate-500 text-[10px] font-black uppercase tracking-[0.3em] mt-4 italic opacity-60">
+                Gana dinero en Quintana Roo
+            </p>
+        </header>
+
+        <main class="flex-1">
+            <div class="glass-card p-8 space-y-6 fade-in" style="animation-delay: 0.1s;">
+                <div class="space-y-4">
+                    <input type="text" id="regName" class="premium-input" placeholder="NOMBRE COMPLETO">
+                    
+                    <div class="relative">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[10px] text-orange-500 font-black italic pointer-events-none">+52</span>
+                        <input type="tel" id="regPhone" class="premium-input pl-12" placeholder="WHATSAPP (10 DÍGITOS)" maxlength="10">
+                    </div>
+
+                    <input type="password" id="regPass" class="premium-input" placeholder="CREA UNA CONTRASEÑA">
+                </div>
+                
+                <div class="space-y-4">
+                    <p class="text-[9px] font-black uppercase text-slate-400 text-center tracking-widest italic">Documento de Identidad (INE / PASAPORTE)</p>
+                    
+                    <label class="file-label" id="dropZone">
+                        <input type="file" id="regDoc" class="hidden" accept="image/*" onchange="updateFileName(this)">
+                        <div class="w-14 h-14 bg-orange-500/10 rounded-2xl flex items-center justify-center mb-3 border border-orange-500/20">
+                            <i class="fa-solid fa-camera text-orange-500 text-2xl"></i>
+                        </div>
+                        <p id="fileName" class="text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Toca para subir foto</p>
+                    </label>
+                </div>
+
+                <button onclick="registerPro()" id="btnReg" class="btn-pro py-5 text-[12px] flex items-center justify-center gap-3">
+                    <span id="btnText">Enviar Solicitud</span>
+                    <i id="btnIcon" class="fa-solid fa-paper-plane"></i>
+                </button>
+
+                <div class="text-center pt-4 border-t border-white/5">
+                     <a href="login.html" class="text-[10px] font-black text-slate-500 uppercase tracking-widest hover:text-orange-500 transition-colors">
+                        ¿Ya eres Pro? <span class="text-white underline underline-offset-4">Inicia sesión</span>
+                    </a>
+                </div>
+            </div>
+        </main>
+
+        <footer class="mt-12 mb-4 text-center opacity-20">
+            <p class="text-[7px] font-black text-white uppercase tracking-[0.5em]">2026 © CHAMBA GO NETWORK</p>
+        </footer>
+    </div> 
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // TES CLÉS MÉMORISÉES (Sacrées)
+        const SUPABASE_URL = 'https://thjzjwyosyxsgjfcignp.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_ugM18BI_W0G-pu-mY-0a7g_omiUa7rT';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        function updateFileName(input) {
+            const fileNameDisplay = document.getElementById('fileName');
+            const dropZone = document.getElementById('dropZone');
+            
+            if (input.files && input.files[0]) {
+                const name = input.files[0].name;
+                fileNameDisplay.innerText = name;
+                fileNameDisplay.classList.remove('text-slate-400');
+                fileNameDisplay.classList.add('text-orange-500');
+                dropZone.style.borderColor = '#f97316';
+                dropZone.style.background = 'rgba(249, 115, 22, 0.05)';
+            }
+        }
+
+        async function registerPro() {
+            const name = document.getElementById('regName').value.trim();
+            const phoneInput = document.getElementById('regPhone').value.trim();
+            const pass = document.getElementById('regPass').value.trim();
+            const doc = document.getElementById('regDoc').files[0];
+            const btn = document.getElementById('btnReg');
+            const btnText = document.getElementById('btnText');
+            const btnIcon = document.getElementById('btnIcon');
+
+            if(!name || !phoneInput || !pass || !doc) {
+                alert("⚠️ Por favor, completa todos los campos y sube tu identificación.");
+                return;
+            }
+
+            // --- LOGIQUE +52 ---
+            const finalPhone = "+52" + phoneInput;
+
+            btn.disabled = true;
+            btnText.innerText = "ENVIANDO...";
+            btnIcon.className = "fa-solid fa-circle-notch animate-spin";
+
+            try {
+                // 1. Upload Document dans le storage 'documents'
+                const docName = `${phoneInput}_ID_${Date.now()}.png`;
+                const { error: uploadError } = await supabaseClient.storage
+                    .from('documents')
+                    .upload(docName, doc, { upsert: true });
+
+                if(uploadError) throw new Error("Error al subir ID: " + uploadError.message);
+
+                // 2. Insertion dans ta table 'users' (ou 'profiles' selon ta structure)
+                // J'utilise 'users' pour rester cohérent avec tes autres pages
+                const { error: profileError } = await supabaseClient
+                    .from('users')
+                    .insert([{
+                        name: name,
+                        phone: finalPhone,
+                        password: pass,
+                        role: 'pro',
+                        status: 'pending' // Pour que tu puisses valider l'ID avant qu'ils travaillent
+                    }]);
+
+                if(profileError) throw profileError;
+
+                alert("✅ ¡Solicitud recibida! Revisaremos tus documentos en breve.");
+                window.location.href = 'login.html';
+
+            } catch (err) {
+                alert("❌ Error: " + err.message);
+                btn.disabled = false;
+                btnText.innerText = "Enviar Solicitud";
+                btnIcon.className = "fa-solid fa-paper-plane";
+            }
+        }
+    </script>
+</body>
+</html>
