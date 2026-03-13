@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-slate-950">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Panel Pro | CHAMBA GO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+        body { background-color: #020617; font-family: 'Plus Jakarta Sans', sans-serif; color: white; }
+        .glass { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(10px); }
+        .progress-glow { box-shadow: 0 0 15px rgba(249, 115, 22, 0.3); }
+    </style>
+</head>
+<body class="h-full">
+
+    <div class="max-w-[450px] mx-auto p-6 pb-32">
+        <header class="flex items-center justify-between mb-8 pt-4">
+            <h1 class="text-xl font-black uppercase italic tracking-tighter">MI <span class="text-orange-500">BILLETERA</span></h1>
+            <div onclick="window.location.href='config.html'" class="w-10 h-10 glass rounded-xl flex items-center justify-center cursor-pointer">
+                <i class="fa-solid fa-gear text-xs text-slate-400"></i>
+            </div>
+        </header>
+
+        <div class="glass p-8 rounded-[2.5rem] relative overflow-hidden mb-6">
+            <div class="absolute top-0 right-0 p-6 opacity-10">
+                <i class="fa-solid fa-wallet text-6xl"></i>
+            </div>
+            
+            <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-2 italic text-center">Saldo Actual a pagar</p>
+            <h2 id="balanceDisplay" class="text-5xl font-black text-center italic tracking-tighter mb-6">$0.00</h2>
+            
+            <div class="space-y-2">
+                <div class="flex justify-between text-[8px] font-black uppercase tracking-widest italic text-slate-500 px-1">
+                    <span>Nivel de confianza</span>
+                    <span id="limitLabel">Límite: $500</span>
+                </div>
+                <div class="w-full bg-white/5 h-3 rounded-full overflow-hidden p-[2px]">
+                    <div id="debtBar" class="h-full bg-orange-500 rounded-full transition-all duration-1000 progress-glow" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 mb-8">
+            <div class="glass p-5 rounded-3xl">
+                <i class="fa-solid fa-star text-orange-500 mb-2 text-xs"></i>
+                <p class="text-[9px] font-bold text-slate-500 uppercase italic">Calificación</p>
+                <p class="font-black text-white italic">4.9</p>
+            </div>
+            <div class="glass p-5 rounded-3xl">
+                <i class="fa-solid fa-check-double text-green-500 mb-2 text-xs"></i>
+                <p class="text-[9px] font-bold text-slate-500 uppercase italic">Jobs Listos</p>
+                <p id="totalJobs" class="font-black text-white italic">0</p>
+            </div>
+        </div>
+
+        <div id="paymentSection" class="space-y-4">
+            <button onclick="simularPago()" class="w-full bg-orange-500 text-black py-5 rounded-[2rem] font-black uppercase text-[11px] shadow-lg shadow-orange-500/20 active:scale-95 transition-all flex items-center justify-center gap-3">
+                <i class="fa-solid fa-bolt"></i> Pagar Comisión Ahora
+            </button>
+            <p class="text-center text-[8px] font-bold text-slate-500 uppercase tracking-widest italic">
+                Paga a tiempo para subir tu límite a $1,000 MXN
+            </p>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const _supabase = supabase.createClient('https://thjzjwyosyxsgjfcignp.supabase.co', 'sb_publishable_ugM18BI_W0G-pu-mY-0a7g_omiUa7rT');
+        const myPhone = localStorage.getItem('userPhone');
+
+        async function initProProfile() {
+            if (!myPhone) return;
+
+            const { data: pro } = await _supabase
+                .from('profiles')
+                .select('*')
+                .eq('phone', myPhone)
+                .single();
+
+            if (pro) {
+                const balance = pro.balance || 0;
+                const limit = pro.max_debt || -500; // Si no existe en BD, el primero es 500
+                
+                // Actualizar interfaz
+                document.getElementById('balanceDisplay').innerText = `$${Math.abs(balance).toFixed(2)}`;
+                document.getElementById('limitLabel').innerText = `Límite: $${Math.abs(limit)}`;
+
+                // Colorear saldo si debe dinero
+                if (balance < 0) {
+                    document.getElementById('balanceDisplay').classList.add('text-orange-500');
+                }
+
+                // Cálculo de la barra (ej: debe 250 de un límite de 500 = 50%)
+                const percentage = (Math.abs(balance) / Math.abs(limit)) * 100;
+                document.getElementById('debtBar').style.width = Math.min(percentage, 100) + '%';
+                
+                // Si está cerca del límite, poner barra roja
+                if (percentage > 80) {
+                    document.getElementById('debtBar').classList.replace('bg-orange-500', 'bg-red-500');
+                }
+            }
+        }
+
+        // Simulación de la lógica de "Step by Step"
+        async function simularPago() {
+            const monto = prompt("¿Cuánto vas a pagar? (Simulación de pago)");
+            if (!monto) return;
+
+            const { data: pro } = await _supabase.from('profiles').select('*').eq('phone', myPhone).single();
+            
+            let currentBalance = pro.balance || 0;
+            let currentLimit = pro.max_debt || -500;
+            
+            let newBalance = currentBalance + parseFloat(monto);
+            let newLimit = currentLimit;
+
+            // LOGIQUE ÉVOLUTIVE
+            if (newBalance >= 0) { // S'il a tout payé
+                if (currentLimit === -500) newLimit = -1000;
+                else if (currentLimit === -1000) newLimit = -1500;
+                else if (currentLimit === -1500) newLimit = -2000;
+                
+                alert("¡Felicidades! Has cumplido. Tu límite ha subido a $" + Math.abs(newLimit));
+            }
+
+            const { error } = await _supabase
+                .from('profiles')
+                .update({ 
+                    balance: newBalance,
+                    max_debt: newLimit
+                })
+                .eq('phone', myPhone);
+
+            if (!error) initProProfile();
+        }
+
+        window.onload = initProProfile;
+    </script>
+</body>
+</html>

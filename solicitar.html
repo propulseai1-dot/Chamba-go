@@ -2,129 +2,204 @@
 <html lang="es" class="h-full bg-slate-950">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>CHAMBA GO | Pedir Ayuda</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>CHAMBA GO | Solicitar</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-
-    <script>
-        if (localStorage.getItem('userRole') !== 'client') {
-            window.location.replace('login.html?role=client');
-        }
-    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+        :root { --main-orange: #f97316; }
+        body { background-color: #020617; font-family: 'Plus Jakarta Sans', sans-serif; color: white; margin: 0; }
+        .hero-mesh { background-image: radial-gradient(at 0% 0%, rgba(249, 115, 22, 0.08) 0, transparent 50%); }
+        .category-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); transition: all 0.2s ease; }
+        .category-card.active { border-color: var(--main-orange); background: rgba(249, 115, 22, 0.15); transform: translateY(-2px); }
+        .payment-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); transition: all 0.2s ease; cursor: pointer; }
+        .payment-card.active { border-color: #f97316; background: rgba(249, 115, 22, 0.1); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
 </head>
 <body class="h-full">
 
-    <div class="app-shell hero-mesh">
+    <div class="max-w-[450px] mx-auto min-h-screen flex flex-col hero-mesh pb-20">
         
         <header class="px-6 pt-12 pb-4 flex items-center gap-4">
-            <div onclick="window.location.href='index.html'" class="w-10 h-10 glass-card flex items-center justify-center btn-press cursor-pointer">
+            <div onclick="window.location.href='index.html'" class="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center cursor-pointer active:scale-90 transition-transform">
                 <i class="fa-solid fa-arrow-left text-xs text-white"></i>
             </div>
-            <h1 class="text-2xl font-black italic tracking-tighter uppercase">
-                PEDIR <span class="text-orange-500">AYUDA</span>
-            </h1>
+            <h1 class="text-2xl font-black italic tracking-tighter uppercase">NUEVA <span class="text-orange-500">CHAMBA</span></h1>
         </header>
 
-        <main class="flex-1 px-6 pt-4 pb-32 overflow-y-auto no-scrollbar">
-            
-            <div class="mb-8 text-center fade-in">
-                <div class="inline-flex items-center justify-center w-20 h-20 bg-orange-500/10 rounded-full mb-4 border border-orange-500/20">
-                    <i class="fa-solid fa-wand-magic-sparkles text-3xl text-orange-500"></i>
+        <main class="px-6 space-y-6">
+            <section>
+                <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-4 italic">Categorías Disponibles</p>
+                <div class="grid grid-cols-3 gap-2">
+                    <div onclick="selectCategory('Limpieza', 200, this)" class="category-card p-3 rounded-2xl flex flex-col items-center gap-2 cursor-pointer">
+                        <i class="fa-solid fa-broom text-lg text-orange-500"></i>
+                        <span class="text-[8px] font-bold uppercase text-center">Limpieza</span>
+                    </div>
+                    <div onclick="selectCategory('Plomería', 450, this)" class="category-card p-3 rounded-2xl flex flex-col items-center gap-2 cursor-pointer">
+                        <i class="fa-solid fa-faucet text-lg text-orange-500"></i>
+                        <span class="text-[8px] font-bold uppercase text-center">Plomero</span>
+                    </div>
+                    <div onclick="selectCategory('Electricista', 500, this)" class="category-card p-3 rounded-2xl flex flex-col items-center gap-2 cursor-pointer">
+                        <i class="fa-solid fa-bolt text-lg text-orange-500"></i>
+                        <span class="text-[8px] font-bold uppercase text-center">Eléctrico</span>
+                    </div>
+                    <div onclick="selectCategory('Otros', 350, this)" class="category-card p-3 rounded-2xl flex flex-col items-center gap-2 cursor-pointer">
+                        <i class="fa-solid fa-ellipsis-h text-lg text-orange-500"></i>
+                        <span class="text-[8px] font-bold uppercase text-center">Otros</span>
+                    </div>
                 </div>
-                <p class="text-slate-500 text-[10px] font-black uppercase tracking-[0.4em] italic opacity-60">
-                    Describe lo que necesitas
-                </p>
-            </div>
+            </section>
 
-            <div class="glass-card p-8 space-y-6 fade-in">
-                <div class="space-y-4">
-                    <div class="relative">
-                        <label class="text-[9px] font-black uppercase text-slate-500 ml-2 mb-1 block">¿Qué necesitas?</label>
-                        <input type="text" id="jobTitle" class="premium-input" placeholder="Ej: Electricista, Mudanza...">
+            <section class="bg-white/5 border border-white/10 rounded-[2.5rem] p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest italic">Tiempo estimado</p>
+                        <h2 id="displayHours" class="text-2xl font-black italic uppercase">1 HORA</h2>
                     </div>
-
-                    <div class="relative">
-                        <label class="text-[9px] font-black uppercase text-slate-500 ml-2 mb-1 block">Detalles del trabajo</label>
-                        <textarea id="jobDesc" rows="3" class="premium-input pt-4" placeholder="Explica brevemente..."></textarea>
+                    <div class="flex items-center gap-4">
+                        <button onclick="updateHours(-1)" class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center active:bg-orange-500 active:text-black transition-all">
+                            <i class="fa-solid fa-minus text-xs"></i>
+                        </button>
+                        <button onclick="updateHours(1)" class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center active:bg-orange-500 active:text-black transition-all">
+                            <i class="fa-solid fa-plus text-xs"></i>
+                        </button>
                     </div>
+                </div>
 
-                    <div class="relative">
-                        <label class="text-[9px] font-black uppercase text-slate-500 ml-2 mb-1 block">Presupuesto (MXN)</label>
-                        <input type="number" id="jobBudget" class="premium-input" placeholder="Ej: 800">
+                <div class="pt-6 border-t border-white/5 flex justify-between items-end">
+                    <div>
+                        <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest italic">Total Sugerido</p>
+                        <div class="flex items-baseline gap-1">
+                            <span class="text-3xl font-black italic text-white">$</span>
+                            <span id="totalPriceDisplay" class="text-3xl font-black italic text-white">0</span>
+                            <span class="text-[10px] font-bold text-slate-500 ml-1">MXN</span>
+                        </div>
                     </div>
+                    <p id="hourlyRateLabel" class="text-[9px] font-bold text-orange-500 italic uppercase">Elige servicio</p>
+                </div>
+            </section>
 
-                    <div class="relative">
-                        <label class="text-[9px] font-black uppercase text-slate-500 ml-2 mb-1 block">Ubicación</label>
-                        <select id="jobLocation" class="premium-input appearance-none bg-slate-900 text-white uppercase text-[10px] font-bold">
-                            <option value="Playa del Carmen">Playa del Carmen</option>
-                            <option value="Tulum">Tulum</option>
-                            <option value="Cancún">Cancún</option>
-                        </select>
+            <section>
+                <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-4 italic">Método de Pago</p>
+                <div class="grid grid-cols-2 gap-3">
+                    <div id="payCash" onclick="selectPayment('cash')" class="payment-card p-4 rounded-3xl flex flex-col gap-2 active">
+                        <i class="fa-solid fa-money-bill-wave text-orange-500"></i>
+                        <span class="text-[10px] font-black uppercase italic">100% Efectivo</span>
+                        <p class="text-[7px] text-slate-400 leading-tight">Pagas el total directamente al Pro al terminar el trabajo.</p>
+                    </div>
+                    <div id="payDigital" onclick="selectPayment('digital')" class="payment-card p-4 rounded-3xl flex flex-col gap-2 opacity-50">
+                        <i class="fa-solid fa-credit-card text-sky-500"></i>
+                        <span class="text-[10px] font-black uppercase italic">Digital (Próximamente)</span>
+                        <p class="text-[7px] text-slate-400 leading-tight">Pago seguro con tarjeta a través de la app.</p>
                     </div>
                 </div>
                 
-                <button onclick="enviarSolicitud()" id="btnSend" class="btn-primary text-[11px] mt-4">
-                    <span>Publicar Chamba</span>
-                    <i class="fa-solid fa-bolt text-sm"></i>
-                </button>
-            </div>
-        </main>
-
-        <nav class="tab-bar">
-            <div class="tab-item" onclick="window.location.href='index.html'">
-                <i class="fa-solid fa-house-chimney text-lg"></i>
-                <span class="text-[8px] font-black uppercase tracking-widest">Inicio</span>
-            </div>
-            <div class="tab-item" onclick="window.location.href='marketplace.html'">
-                <i class="fa-solid fa-briefcase text-lg"></i>
-                <span class="text-[8px] font-black uppercase tracking-widest">Chambas</span>
-            </div>
-            <div class="tab-item active">
-                <div class="w-14 h-14 bg-orange-500 rounded-2xl flex items-center justify-center text-black shadow-lg shadow-orange-500/40 -mt-12 border-[6px] border-[#020617]">
-                    <i class="fa-solid fa-plus text-xl"></i>
+                <div id="paymentSummary" class="mt-4 p-4 bg-orange-500/5 border border-orange-500/20 rounded-2xl">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-[9px] font-bold text-slate-400 uppercase">Pago al Pro:</span>
+                        <span id="cashAmount" class="text-[11px] font-black text-white italic">$0.00</span>
+                    </div>
+                    <div class="flex justify-between items-center opacity-50">
+                        <span class="text-[9px] font-bold text-slate-400 uppercase italic">Comisión Chamba (cobrada al Pro):</span>
+                        <span id="comisionAmount" class="text-[11px] font-black text-orange-500 italic">$0.00</span>
+                    </div>
                 </div>
-            </div>
-            <div class="tab-item">
-                <i class="fa-solid fa-comment-dots text-lg"></i>
-                <span class="text-[8px] font-black uppercase tracking-widest">Mensajes</span>
-            </div>
-            <div class="tab-item" onclick="window.location.href='dashboard-pro.html'">
-                <i class="fa-solid fa-gear text-lg"></i>
-                <span class="text-[8px] font-black uppercase tracking-widest">Perfil</span>
-            </div>
-        </nav>
-    </div> 
+            </section>
+
+            <section>
+                <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-4 italic">Detalles de la solicitud</p>
+                <textarea id="jobDesc" placeholder="Describe lo que necesitas con claridad..." class="w-full bg-white/5 border border-white/10 rounded-3xl p-5 text-sm text-white outline-none focus:border-orange-500 h-28 transition-all placeholder:text-slate-600"></textarea>
+            </section>
+
+            <button onclick="createMission()" class="w-full bg-orange-500 py-5 rounded-2xl text-black font-black italic uppercase tracking-tighter hover:bg-orange-400 transition-all shadow-lg shadow-orange-500/20 active:scale-95">
+                Publicar Chamba ⚡
+            </button>
+        </main>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        const SUPABASE_URL = 'https://thjzjwyosyxsgjfcignp.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_ugM18BI_W0G-pu-mY-0a7g_omiUa7rT';
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const _supabase = supabase.createClient('https://thjzjwyosyxsgjfcignp.supabase.co', 'sb_publishable_ugM18BI_W0G-pu-mY-0a7g_omiUa7rT');
 
-        async function enviarSolicitud() {
-            const title = document.getElementById('jobTitle').value.trim();
-            const desc = document.getElementById('jobDesc').value.trim();
-            const budget = document.getElementById('jobBudget').value;
-            const location = document.getElementById('jobLocation').value;
-            const btn = document.getElementById('btnSend');
-            const clientPhone = localStorage.getItem('userPhone');
+        let selectedCat = "";
+        let hourlyRate = 0;
+        let hours = 1;
+        let paymentMethod = "cash";
 
-            if(!title || !desc || !budget) return;
+        function selectCategory(cat, rate, el) {
+            selectedCat = cat;
+            hourlyRate = rate;
+            document.querySelectorAll('.category-card').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            document.getElementById('hourlyRateLabel').innerText = `$${rate} MXN / HORA`;
+            calculateTotal();
+        }
 
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-circle-notch animate-spin text-lg"></i>';
+        function updateHours(val) {
+            hours = Math.max(1, hours + val);
+            document.getElementById('displayHours').innerText = `${hours} ${hours > 1 ? 'HORAS' : 'HORA'}`;
+            calculateTotal();
+        }
 
-            try {
-                const { error } = await supabaseClient.from('jobs').insert([{
-                    title, description: desc, budget, location, client_phone: clientPhone, status: 'open'
+        function selectPayment(method) {
+            if (method === 'digital') return; // Désactivé pour l'instant
+            paymentMethod = method;
+            document.getElementById('payCash').classList.add('active');
+            calculateTotal();
+        }
+
+        function calculateTotal() {
+            const total = hours * hourlyRate;
+            document.getElementById('totalPriceDisplay').innerText = total;
+
+            const comision = (total * 0.20).toFixed(2);
+            document.getElementById('cashAmount').innerText = `$${total.toFixed(2)}`;
+            document.getElementById('comisionAmount').innerText = `$${comision}`;
+        }
+
+        async function createMission() {
+            const desc = document.getElementById('jobDesc').value;
+            const myPhone = localStorage.getItem('userPhone');
+
+            if(!selectedCat || !desc) {
+                alert("⚠️ Por favor selecciona una categoría y describe el trabajo.");
+                return;
+            }
+
+            if(!myPhone) {
+                alert("⚠️ Debes estar conectado para publicar.");
+                return;
+            }
+
+            const total = hours * hourlyRate;
+            const comision = total * 0.20; // Le Pro devra 20%
+            const autoTitle = `${selectedCat.toUpperCase()} - ${desc.substring(0, 15)}...`;
+
+            // Insertion dans la base de données
+            const { error } = await _supabase
+                .from('jobs')
+                .insert([{
+                    title: autoTitle,
+                    category: selectedCat,
+                    description: desc,
+                    price_offered: total,
+                    total_price: total,
+                    commission_fee: comision, // On stocke le montant de la future dette
+                    hours_estimated: hours,
+                    location: 'Tulum',
+                    status: 'open',
+                    client_phone: myPhone,
+                    payment_method: 'cash',
+                    prepago_paid: false
                 }]);
-                if (error) throw error;
+
+            if (error) {
+                alert("❌ Error: " + error.message);
+            } else {
+                alert("✅ ¡Chamba publicada! Los Pros locales han sido notificados.");
                 window.location.href = 'index.html';
-            } catch (err) {
-                btn.disabled = false;
-                btn.innerHTML = '<span>Publicar Chamba</span> <i class="fa-solid fa-bolt"></i>';
             }
         }
     </script>

@@ -8,124 +8,123 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
-        
         :root { --main-orange: #f97316; --bg-dark: #020617; }
-        
-        body { 
-            background-color: #020617; 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            color: white; 
-            margin: 0;
-            overflow: hidden; 
-        }
-
-        /* --- CONTAINER APP (MAX 450PX) --- */
-        .app-shell {
-            max-width: 450px;
-            margin: 0 auto;
-            height: 100vh;
-            background: var(--bg-dark);
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 0 100px rgba(0,0,0,0.5);
-            border-left: 1px solid rgba(255,255,255,0.05);
-            border-right: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .hero-mesh { 
-            background: 
-                radial-gradient(circle at 50% -20%, #f9731615, transparent),
-                radial-gradient(circle at 0% 50%, #0ea5e910, transparent);
-        }
-
-        .glass-nav { 
-            background: rgba(2, 6, 23, 0.85); 
-            backdrop-filter: blur(20px); 
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08); 
-        }
-
-        #chatBox::-webkit-scrollbar { width: 4px; }
-        #chatBox::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
-
-        .bubble {
-            max-width: 85%;
-            padding: 12px 16px;
-            border-radius: 1.2rem;
-            font-size: 13px;
-            font-weight: 600;
-            line-height: 1.4;
-            position: relative;
-            animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
-
-        @keyframes pop {
-            from { opacity: 0; transform: scale(0.8); }
-            to { opacity: 1; transform: scale(1); }
-        }
+        body { background-color: #020617; font-family: 'Plus Jakarta Sans', sans-serif; color: white; margin: 0; overflow: hidden; }
+        .app-shell { max-width: 450px; margin: 0 auto; height: 100vh; background: var(--bg-dark); position: relative; display: flex; flex-direction: column; }
+        .hero-mesh { background: radial-gradient(circle at 50% -20%, #f9731615, transparent), radial-gradient(circle at 0% 50%, #0ea5e910, transparent); }
+        .glass-nav { background: rgba(2, 6, 23, 0.85); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+        .bubble { max-width: 85%; padding: 12px 16px; border-radius: 1.2rem; font-size: 13px; font-weight: 600; line-height: 1.4; position: relative; animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes pop { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .pro-avatar { width: 42px; height: 42px; border-radius: 14px; object-fit: cover; border: 1px solid rgba(255,255,255,0.1); }
+        .online-dot { width: 10px; height: 10px; background: #10b981; border: 2px solid #020617; border-radius: 50%; position: absolute; bottom: -2px; right: -2px; }
     </style>
 </head>
 <body class="h-full">
 
     <div class="app-shell hero-mesh">
-        
-        <header class="glass-nav p-5 flex items-center gap-4 sticky top-0 z-50">
-            <button onclick="history.back()" class="w-10 h-10 flex items-center justify-center bg-white/5 rounded-full border border-white/10 text-slate-400 active:scale-90 transition-all">
-                <i class="fa-solid fa-chevron-left"></i>
-            </button>
-            <div>
-                <h1 class="text-[10px] font-black italic uppercase text-orange-500 tracking-tighter">Chat de Servicio</h1>
-                <p id="chatWith" class="text-[9px] text-slate-500 uppercase tracking-widest font-black italic">Seguridad Activa</p>
+        <header class="glass-nav p-5 flex items-center justify-between sticky top-0 z-50">
+            <div class="flex items-center gap-4">
+                <button onclick="location.href='mis-chambas.html'" class="w-10 h-10 flex items-center justify-center bg-white/5 rounded-full border border-white/10 text-slate-400">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                
+                <div class="flex items-center gap-3">
+                    <div class="relative" id="avatarContainer">
+                        <div class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center border border-white/10">
+                            <i class="fa-solid fa-user text-slate-600"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <p id="chatWith" class="text-sm text-white font-bold italic uppercase tracking-tight">Cargando...</p>
+                        <div class="flex items-center gap-1.5">
+                            <div class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></div>
+                            <span class="text-[9px] font-black text-emerald-500 uppercase italic">En línea</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </header>
 
         <div id="chatBox" class="flex-grow overflow-y-auto p-5 space-y-4 flex flex-col pb-32 no-scrollbar">
-            <div class="py-10 text-center opacity-20 italic font-black uppercase text-[9px] tracking-[0.3em]">
-                Conexión segura establecida...
+            <div id="loadingState" class="py-20 text-center">
+                <div class="inline-block w-8 h-8 border-4 border-orange-500/20 border-t-orange-500 rounded-full animate-spin"></div>
             </div>
         </div>
 
         <div class="p-4 glass-nav absolute bottom-0 left-0 right-0 z-50">
             <div id="warningMsg" class="hidden text-[8px] text-red-500 font-black uppercase mb-3 text-center animate-bounce">
-                🚫 Bloqueado: No puedes compartir números de teléfono
+                🚫 Bloqueado: No puedes compartir números
             </div>
             <div class="flex gap-2 items-center">
                 <input type="text" id="msgInput" placeholder="Escribe un mensaje..." 
-                    class="flex-grow bg-white/5 border border-white/10 rounded-2xl p-4 text-sm text-white outline-none focus:border-orange-500 transition-all">
-                <button onclick="sendMessage()" id="sendBtn" class="bg-orange-500 w-14 h-14 rounded-2xl flex items-center justify-center text-black shadow-lg shadow-orange-500/20 active:scale-90 transition-all">
+                    class="flex-grow bg-white/5 border border-white/10 rounded-2xl p-4 text-sm text-white outline-none focus:border-orange-500">
+                <button onclick="sendMessage()" id="sendBtn" class="bg-orange-500 w-14 h-14 rounded-2xl flex items-center justify-center text-black">
                     <i class="fa-solid fa-paper-plane text-lg"></i>
                 </button>
             </div>
         </div>
+    </div>
 
-    </div> <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        const SUPABASE_URL = 'https://thjzjwyosyxsgjfcignp.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_ugM18BI_W0G-pu-mY-0a7g_omiUa7rT';
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const _supabase = supabase.createClient('https://thjzjwyosyxsgjfcignp.supabase.co', 'sb_publishable_ugM18BI_W0G-pu-mY-0a7g_omiUa7rT');
 
         const userPhone = localStorage.getItem('userPhone');
         const urlParams = new URLSearchParams(window.location.search);
-        const missionId = urlParams.get('id');
+        const jobId = urlParams.get('jobId'); 
 
-        if (!missionId || !userPhone) {
-            window.location.href = 'index.html';
+        if (!jobId || !userPhone) { window.location.href = 'index.html'; }
+
+        async function getChatHeader() {
+            try {
+                const { data: app, error: appError } = await _supabase
+                    .from('applications')
+                    .select('pro_phone, pro_name')
+                    .eq('job_id', jobId)
+                    .eq('status', 'accepted')
+                    .maybeSingle();
+
+                if (app) {
+                    document.getElementById('chatWith').innerText = app.pro_name;
+                    
+                    const { data: proUser } = await _supabase
+                        .from('users')
+                        .select('*') 
+                        .eq('phone', app.pro_phone)
+                        .maybeSingle();
+
+                    if (proUser) {
+                        const imgUrl = proUser.avatar_url || proUser.photo || proUser.profile_pic;
+                        if (imgUrl) {
+                            document.getElementById('avatarContainer').innerHTML = `
+                                <img src="${imgUrl}" class="pro-avatar" alt="Pro">
+                                <div class="online-dot"></div>
+                            `;
+                        }
+                    }
+                }
+            } catch (e) { console.error("Header Error:", e); }
         }
 
         async function loadMessages() {
-            const { data, error } = await supabaseClient
+            const { data, error } = await _supabase
                 .from('messages')
                 .select('*')
-                .eq('mission_id', missionId)
+                .eq('job_id', jobId) 
                 .order('created_at', { ascending: true });
-
-            if (error) return;
 
             const chatBox = document.getElementById('chatBox');
             chatBox.innerHTML = ''; 
-            
-            if (data.length === 0) {
-                chatBox.innerHTML = `<div class="py-10 text-center opacity-10 font-black uppercase text-[8px] tracking-[0.4em]">Inicia la conversación</div>`;
+
+            if (error) {
+                console.error("Supabase Error:", error);
+                chatBox.innerHTML = `<div class="py-20 text-center"><p class="text-red-500 text-[10px] font-black uppercase">Error de sincronización</p></div>`;
+                return;
+            }
+
+            if (!data || data.length === 0) {
+                chatBox.innerHTML = `<div class="py-20 text-center opacity-10 font-black uppercase text-[8px] tracking-[0.4em]">Sin mensajes aún</div>`;
             } else {
                 data.forEach(msg => renderMsg(msg));
             }
@@ -135,39 +134,41 @@
         async function sendMessage() {
             const input = document.getElementById('msgInput');
             const text = input.value.trim();
-            const btn = document.getElementById('sendBtn');
-
             if (!text) return;
 
-            // Filtre ANTI-WHATSAPP
+            // Anti-numéro (très basique)
             const cleanText = text.replace(/\s/g, '').replace(/[-.]/g, '');
-            const phoneRegex = /\d{8,11}/; 
-            
-            if (phoneRegex.test(cleanText)) {
+            if (/\d{8,11}/.test(cleanText)) {
                 document.getElementById('warningMsg').classList.remove('hidden');
                 setTimeout(() => document.getElementById('warningMsg').classList.add('hidden'), 4000);
                 return;
             }
 
+            const btn = document.getElementById('sendBtn');
             btn.disabled = true;
-            const { error } = await supabaseClient
-                .from('messages')
-                .insert([{ mission_id: missionId, sender_phone: userPhone, text: text }]);
 
-            if (!error) input.value = '';
+            const { error } = await _supabase
+                .from('messages')
+                .insert([{ job_id: jobId, sender_phone: userPhone, text: text }]);
+
+            if (error) {
+                console.error("Insert Error:", error);
+            } else {
+                input.value = '';
+            }
             btn.disabled = false;
         }
 
         function renderMsg(msg) {
             const chatBox = document.getElementById('chatBox');
-            const isMe = msg.sender_phone === userPhone;
-            
+            if (!chatBox) return;
+
+            // Nettoyage du message vide au premier message
+            if (chatBox.innerText.includes("Sin mensajes")) chatBox.innerHTML = '';
+
+            const isMe = String(msg.sender_phone) === String(userPhone);
             const div = document.createElement('div');
-            div.className = `bubble ${
-                isMe 
-                ? 'bg-orange-500 self-end text-black rounded-tr-none shadow-orange-500/10' 
-                : 'bg-white/10 self-start text-slate-100 rounded-tl-none border border-white/5'
-            }`;
+            div.className = `bubble ${isMe ? 'bg-orange-500 self-end text-black rounded-tr-none' : 'bg-white/10 self-start text-slate-100 rounded-tl-none border border-white/5'}`;
             div.innerText = msg.text;
             
             chatBox.appendChild(div);
@@ -180,20 +181,23 @@
         }
 
         window.onload = () => {
+            getChatHeader();
             loadMessages();
-            supabaseClient
-                .channel(`chat_${missionId}`)
+            
+            _supabase
+                .channel(`chat_${jobId}`)
                 .on('postgres_changes', { 
                     event: 'INSERT', 
                     schema: 'public', 
                     table: 'messages', 
-                    filter: `mission_id=eq.${missionId}` 
+                    filter: `job_id=eq.${jobId}` 
                 }, payload => {
                     renderMsg(payload.new);
                 })
                 .subscribe();
         };
 
+        // Envoi avec touche Entrée
         document.getElementById('msgInput').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') sendMessage();
         });

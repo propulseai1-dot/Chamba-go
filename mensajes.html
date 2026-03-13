@@ -5,73 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>CHAMBA GO | Mensajes</title>
 
-    <script>
-        if (!localStorage.getItem('userRole')) {
-            window.location.replace('login.html'); // .replace est mieux car il empêche de faire "Précédent"
-        }
-    </script>
-    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
         :root { --main-orange: #f97316; --bg-dark: #020617; }
-        
-        .app-container {
-            width: 100%; max-width: 450px; margin: 0 auto;
-            position: relative; min-height: 100vh;
-            display: flex; flex-direction: column; background: #020617;
-        }
-
-        /* --- NAVIGATION UNIFIÉE (HAUTEUR OPTIMISÉE) --- */
-        .tab-bar-wrapper { 
-            position: fixed; bottom: 15px; width: 100%; max-width: 450px; 
-            padding: 0 15px; z-index: 1000; left: 50%; transform: translateX(-50%);
-        }
-
-        .tab-bar { 
-            width: 100%; height: 75px; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.08); border-radius: 25px; 
-            display: grid; grid-template-columns: repeat(5, 1fr); 
-            align-items: center; box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-            position: relative;
-        }
-
+        body { background-color: #020617; font-family: 'Plus Jakarta Sans', sans-serif; color: white; margin: 0; }
+        .app-container { width: 100%; max-width: 450px; margin: 0 auto; position: relative; min-height: 100vh; display: flex; flex-direction: column; background: #020617; }
+        .tab-bar-wrapper { position: fixed; bottom: 15px; width: 100%; max-width: 450px; padding: 0 15px; z-index: 1000; left: 50%; transform: translateX(-50%); }
+        .tab-bar { width: 100%; height: 75px; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.08); border-radius: 25px; display: grid; grid-template-columns: repeat(5, 1fr); align-items: center; box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
         .tab-item { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #64748b; cursor: pointer; transition: all 0.3s; }
         .tab-item.active { color: var(--main-orange); }
-
-        .plus-button {
-            position: absolute; top: -28px; left: 50%; transform: translateX(-50%);
-            width: 58px; height: 58px; background: var(--main-orange); border-radius: 20px;
-            display: flex; align-items: center; justify-content: center; 
-            color: #000; font-size: 22px; border: 5px solid #020617;
-            box-shadow: 0 10px 20px rgba(249, 115, 22, 0.3); z-index: 1100;
-        }
-
-        .chat-card {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 2rem; padding: 1.25rem;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .chat-card:active { background: rgba(249, 115, 22, 0.05); transform: scale(0.97); }
-
-        .unread-badge {
-            width: 20px; height: 20px; background: var(--main-orange);
-            color: black; font-size: 10px; font-weight: 900;
-            display: flex; align-items: center; justify-content: center;
-            border-radius: 50%;
-        }
-
-        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .plus-button { position: absolute; top: -30px; left: 50%; transform: translateX(-50%); width: 60px; height: 60px; background: var(--main-orange); border-radius: 20px; display: flex; align-items: center; justify-content: center; color: #000; font-size: 24px; border: 6px solid #020617; box-shadow: 0 10px 20px rgba(249, 115, 22, 0.3); z-index: 1100; }
+        .chat-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 2rem; padding: 1.25rem; transition: all 0.3s; }
         .hero-mesh { background-image: radial-gradient(at 0% 0%, rgba(249, 115, 22, 0.1) 0, transparent 50%), radial-gradient(at 100% 0%, rgba(249, 115, 22, 0.05) 0, transparent 50%); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body class="h-full bg-slate-950">
 
     <div class="app-container hero-mesh">
-
         <header class="px-6 pt-12 pb-6 flex justify-between items-center sticky top-0 z-50 backdrop-blur-xl bg-slate-950/40">
             <div>
                 <h1 class="text-3xl font-black italic tracking-tighter text-white uppercase leading-none">MIS <span class="text-orange-500">CHATS</span></h1>
@@ -85,36 +40,18 @@
         <main class="flex-1 overflow-y-auto px-6 pb-44 no-scrollbar">
             <div id="chatsList" class="space-y-4 mt-6">
                 <div onclick="window.location.href='chat-support.html'" class="chat-card flex items-center gap-4 cursor-pointer">
-                    <div class="relative flex-shrink-0">
-                        <div class="w-16 h-16 bg-orange-500/10 rounded-2xl flex items-center justify-center border border-orange-500/20">
-                            <i class="fa-solid fa-headset text-2xl text-orange-500"></i>
-                        </div>
-                        <span class="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 border-[4px] border-[#020617] rounded-full"></span>
+                    <div class="w-16 h-16 bg-orange-500/10 rounded-2xl flex items-center justify-center border border-orange-500/20">
+                        <i class="fa-solid fa-headset text-2xl text-orange-500"></i>
                     </div>
                     <div class="flex-1">
-                        <div class="flex justify-between items-center mb-1">
-                            <h3 class="text-[13px] font-black text-white uppercase tracking-tight italic">Soporte Chamba GO</h3>
-                            <span class="text-[9px] text-orange-500 font-black uppercase">Ahora</span>
+                        <div class="flex justify-between mb-1">
+                            <h3 class="text-[13px] font-black text-white uppercase italic">Soporte Chamba GO</h3>
+                            <span class="text-[9px] text-orange-500 font-black">HORA</span>
                         </div>
-                        <p class="text-[11px] text-slate-300 font-bold line-clamp-1 italic">¡Hola! ¿Cómo va tu primera chamba?</p>
+                        <p class="text-[11px] text-slate-300 font-bold italic line-clamp-1">¡Hola! ¿Cómo va tu primera chamba?</p>
                     </div>
-                    <div class="unread-badge">1</div>
                 </div>
-
-                <div onclick="window.location.href='chat-detail.html?id=101'" class="chat-card flex items-center gap-4 cursor-pointer">
-                    <div class="relative flex-shrink-0">
-                        <img src="https://images.unsplash.com/photo-1590086782792-42dd2350140d?q=80&w=250&h=250&fit=crop" class="w-16 h-16 rounded-2xl border border-white/10 object-cover">
-                        <span class="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 border-[4px] border-[#020617] rounded-full"></span>
-                    </div>
-                    <div class="flex-1">
-                        <div class="flex justify-between items-center mb-1">
-                            <h3 class="text-[13px] font-black text-white uppercase tracking-tight italic">Juan Hernández (Pro)</h3>
-                            <span class="text-[9px] text-slate-500 font-bold uppercase">10:45 AM</span>
-                        </div>
-                        <p class="text-[11px] text-slate-400 line-clamp-1 uppercase font-bold italic">¿Podrías enviarme una foto del problema?</p>
-                    </div>
-                    <i class="fa-solid fa-chevron-right text-xs text-slate-800"></i>
-                </div>
+                <div id="dynamicChats" class="space-y-4"></div>
             </div>
         </main>
 
@@ -124,55 +61,80 @@
                     <i class="fa-solid fa-house text-xl"></i>
                     <span class="text-[8px] font-black uppercase italic">Inicio</span>
                 </div>
-
                 <div id="dynamicNavBtn" class="tab-item"></div>
-                
                 <div class="relative flex justify-center items-center">
-                    <div onclick="window.location.href='solicitar.html'" class="plus-button">
-                        <i class="fa-solid fa-plus text-black"></i>
+                    <div id="centerButton" class="plus-button">
+                        <i class="fa-solid fa-spinner animate-spin text-black text-sm"></i>
                     </div>
                 </div>
-
-                <div class="tab-item active" onclick="window.location.href='mensajes.html'">
+                <div class="tab-item active">
                     <i class="fa-solid fa-comment text-xl"></i>
                     <span class="text-[8px] font-black uppercase italic">Chat</span>
                 </div>
-
-                <div class="tab-item" onclick="window.location.href='comunidad.html'">
-                    <i class="fa-solid fa-users text-xl"></i>
-                    <span class="text-[8px] font-black uppercase italic">Pros</span>
+                <div class="tab-item" onclick="window.location.href='perfil.html'">
+                    <i class="fa-solid fa-user text-xl"></i>
+                    <span class="text-[8px] font-black uppercase italic">Perfil</span>
                 </div>
             </nav>
         </div>
     </div>
 
     <script>
-        function updateNavigation() {
-            const dynamicBtn = document.getElementById('dynamicNavBtn');
-            const isPro = localStorage.getItem('userRole') === 'pro';
+        const _supabase = supabase.createClient('https://thjzjwyosyxsgjfcignp.supabase.co', 'sb_publishable_ugM18BI_W0G-pu-mY-0a7g_omiUa7rT');
+        const myPhone = localStorage.getItem('userPhone');
 
+        async function syncInterface() {
+            if (!myPhone) { window.location.replace('login.html'); return; }
+
+            // RECUPÉRATION DU RÔLE RÉEL DEPUIS SUPABASE
+            const { data: user } = await _supabase.from('users').select('role').eq('phone', myPhone).single();
+            const role = (user?.role || 'client').toLowerCase();
+            const isPro = (role === 'pro' || role === 'jobber');
+
+            const dynamicBtn = document.getElementById('dynamicNavBtn');
+            const centerBtn = document.getElementById('centerButton');
+
+            // Mise à jour visuelle forcée
             if (isPro) {
-                dynamicBtn.innerHTML = `
-                    <div onclick="window.location.href='marketplace.html'" class="flex flex-col items-center">
-                        <i class="fa-solid fa-briefcase text-xl"></i>
-                        <span class="text-[8px] font-black uppercase italic">Chambas</span>
-                    </div>`;
+                dynamicBtn.innerHTML = `<div onclick="window.location.href='marketplace.html'" class="flex flex-col items-center"><i class="fa-solid fa-briefcase text-xl"></i><span class="text-[8px] font-black uppercase italic">Market</span></div>`;
+                centerBtn.innerHTML = '<i class="fa-solid fa-list-check text-black"></i>';
+                centerBtn.onclick = () => window.location.href = 'mis-trabajos-pro.html';
             } else {
-                dynamicBtn.innerHTML = `
-                    <div onclick="window.location.href='categorias.html'" class="flex flex-col items-center">
-                        <i class="fa-solid fa-compass text-xl"></i>
-                        <span class="text-[8px] font-black uppercase italic">Explorar</span>
-                    </div>`;
+                dynamicBtn.innerHTML = `<div onclick="window.location.href='mis-chambas.html'" class="flex flex-col items-center"><i class="fa-solid fa-receipt text-xl"></i><span class="text-[8px] font-black uppercase italic">Mis Chambas</span></div>`;
+                centerBtn.innerHTML = '<i class="fa-solid fa-plus text-black"></i>';
+                centerBtn.onclick = () => window.location.href = 'solicitar.html';
             }
         }
 
-        // Fonction pour se déconnecter proprement
-        function logoutUser() {
-            localStorage.clear();
-            window.location.replace('login.html');
+        async function loadRealChats() {
+            if (!myPhone) return;
+            const { data: messages } = await _supabase.from('messages').select('*, jobs(title)').or(`sender_phone.eq.${myPhone},receiver_phone.eq.${myPhone}`).order('created_at', { ascending: false });
+            if (!messages) return;
+
+            const uniqueChats = {};
+            messages.forEach(msg => { if (!uniqueChats[msg.mission_id]) uniqueChats[msg.mission_id] = msg; });
+            
+            document.getElementById('dynamicChats').innerHTML = Object.values(uniqueChats).map(chat => `
+                <div onclick="window.location.href='chat.html?id=${chat.mission_id}'" class="chat-card flex items-center gap-4 cursor-pointer mt-4">
+                    <div class="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center border border-white/10">
+                        <i class="fa-solid fa-user-tie text-xl text-slate-500"></i>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex justify-between mb-1">
+                            <h3 class="text-[13px] font-black text-white uppercase italic">${chat.jobs?.title || 'Servicio'}</h3>
+                        </div>
+                        <p class="text-[11px] text-slate-400 line-clamp-1 uppercase font-bold italic">${chat.text}</p>
+                    </div>
+                </div>
+            `).join('');
         }
 
-        window.onload = updateNavigation;
+        function logoutUser() { localStorage.clear(); window.location.replace('login.html'); }
+
+        window.onload = () => {
+            syncInterface();
+            loadRealChats();
+        };
     </script>
-</body> 
+</body>
 </html>

@@ -8,60 +8,34 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
         :root { --main-orange: #f97316; --bg-dark: #020617; }
-        .app-shell {
-            max-width: 450px; margin: 0 auto; min-height: 100vh;
-            background: #020617; position: relative;
-            display: flex; flex-direction: column;
-        }
-        .hero-mesh { 
-            background-image: radial-gradient(at 0% 0%, rgba(249, 115, 22, 0.12) 0, transparent 50%),
-                              radial-gradient(at 100% 100%, rgba(249, 115, 22, 0.05) 0, transparent 50%);
-        }
-        .glass-card { 
-            background: rgba(255, 255, 255, 0.02); 
-            backdrop-filter: blur(15px); 
-            border: 1px solid rgba(255, 255, 255, 0.05); 
-            border-radius: 2rem;
-        }
-        .btn-disabled { background: rgba(255,255,255,0.03) !important; color: #475569 !important; border: 1px solid rgba(255,255,255,0.03); cursor: not-allowed; }
-        
-        /* STYLE DU PETIT BONHOMME (Identique à l'index) */
-        .user-btn { 
-            width: 40px; height: 40px; background: rgba(255,255,255,0.05); 
-            border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; 
-            display: flex; align-items: center; justify-content: center; 
-            cursor: pointer; transition: all 0.3s;
-        }
-
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .app-shell { max-width: 450px; margin: 0 auto; min-height: 100vh; background: #020617; position: relative; display: flex; flex-direction: column; }
+        .hero-mesh { background-image: radial-gradient(at 0% 0%, rgba(249, 115, 22, 0.12) 0, transparent 50%), radial-gradient(at 100% 100%, rgba(249, 115, 22, 0.05) 0, transparent 50%); }
+        .glass-card { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 2rem; }
+        .user-btn { width: 40px; height: 40px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .pop-in { animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1); }
         @keyframes popIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* TAB BAR */
-        .tab-bar-wrapper { position: fixed; bottom: 25px; width: 100%; max-width: 450px; padding: 0 20px; z-index: 1000; }
-        .tab-bar { 
-            width: 100%; height: 75px; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.08); border-radius: 25px; display: grid; grid-template-columns: repeat(5, 1fr);
-            align-items: center; box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-        }
-        .tab-item { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #64748b; cursor: pointer; }
+        .tab-bar-wrapper { position: fixed; bottom: 15px; width: 100%; max-width: 450px; padding: 0 15px; z-index: 1000; left: 50%; transform: translateX(-50%); }
+        .tab-bar { width: 100%; height: 75px; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.08); border-radius: 25px; display: grid; grid-template-columns: repeat(5, 1fr); align-items: center; box-shadow: 0 15px 35px rgba(0,0,0,0.5); position: relative; }
+        .tab-item { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #64748b; cursor: pointer; transition: all 0.3s; }
         .tab-item.active { color: var(--main-orange); }
-        .plus-button {
-            position: absolute; top: -30px; left: 50%; transform: translateX(-50%);
-            width: 60px; height: 60px; background: var(--main-orange); border-radius: 20px;
-            display: flex; align-items: center; justify-content: center; color: #000; font-size: 24px; border: 6px solid #020617;
-            box-shadow: 0 10px 20px rgba(249, 115, 22, 0.3);
-        }
+        .plus-button { position: absolute; top: -30px; left: 50%; transform: translateX(-50%); width: 60px; height: 60px; background: var(--main-orange); border-radius: 20px; display: flex; align-items: center; justify-content: center; color: #000; font-size: 24px; border: 6px solid #020617; box-shadow: 0 10px 20px rgba(249, 115, 22, 0.3); z-index: 1100; transition: transform 0.2s; }
+        .plus-button:active { transform: translateX(-50%) scale(0.95); }
+        
+        .section-title { font-[800] text-[10px] uppercase tracking-[0.3em] text-orange-500/50 mb-4 ml-2 italic flex items-center gap-2; }
+        .section-title::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, rgba(249,115,22,0.2), transparent); }
     </style>
 </head>
-<body class="h-full bg-slate-950">
+<body class="h-full bg-slate-950 text-white">
 
     <div class="app-shell hero-mesh">
-        
         <header class="px-6 pt-12 pb-6 flex justify-between items-center sticky top-0 bg-slate-950/80 backdrop-blur-md z-50">
             <div>
-                <h1 class="text-2xl font-black italic text-white uppercase tracking-tighter leading-none">
+                <h1 class="text-2xl font-black italic uppercase tracking-tighter leading-none">
                     CHAMBAS <span class="text-orange-500">MARKET</span>
                 </h1>
                 <div id="statusBadge" class="flex items-center gap-2 mt-2">
@@ -69,40 +43,46 @@
                     <p class="text-[8px] font-black uppercase tracking-[0.2em] text-slate-500 italic">Cargando...</p>
                 </div>
             </div>
-            <div id="profileTrigger" onclick="window.location.href='perfil.html'" class="user-btn active:scale-90">
+            <div onclick="safeRedirect('perfil')" class="user-btn active:scale-90">
                 <i class="fa-solid fa-user text-xs text-white"></i>
             </div>
         </header>
 
-        <main id="marketList" class="flex-1 px-6 pt-4 space-y-4 overflow-y-auto no-scrollbar pb-40">
-            <div class="py-20 text-center opacity-20 italic font-black uppercase text-[10px] tracking-widest text-white">
-                <i class="fa-solid fa-satellite-dish animate-bounce mb-4 block text-2xl"></i>
-                Buscando misiones...
+        <div id="blockBanner" class="hidden px-6 pt-4">
+            <div class="bg-red-500/10 border border-red-500/20 p-4 rounded-2xl flex items-center gap-4">
+                <i class="fa-solid fa-triangle-exclamation text-red-500"></i>
+                <div class="flex-1">
+                    <p class="text-[9px] font-black text-red-500 uppercase italic tracking-widest">Cuenta Suspendida</p>
+                    <p class="text-[8px] font-bold text-slate-400 uppercase italic">Límite de comisión excedido. Paga en tu perfil.</p>
+                </div>
+                <button onclick="safeRedirect('perfil')" class="bg-red-500 text-white text-[8px] font-black px-3 py-2 rounded-lg uppercase italic">Pagar</button>
             </div>
-        </main>
+        </div>
+
+        <main id="marketList" class="flex-1 px-6 pt-4 space-y-4 overflow-y-auto no-scrollbar pb-40"></main>
 
         <div class="tab-bar-wrapper">
             <nav class="tab-bar">
-                <div class="tab-item" onclick="window.location.href='index.html'">
+                <div class="tab-item" onclick="safeRedirect('index')">
                     <i class="fa-solid fa-house text-xl"></i>
                     <span class="text-[8px] font-black uppercase italic">Inicio</span>
                 </div>
-                <div class="tab-item active" onclick="window.location.href='marketplace.html'">
+                <div class="tab-item active" onclick="safeRedirect('marketplace')">
                     <i class="fa-solid fa-briefcase text-xl"></i>
-                    <span class="text-[8px] font-black uppercase italic">Chambas</span>
+                    <span class="text-[8px] font-black uppercase italic">Market</span>
                 </div>
                 <div class="relative flex justify-center items-center">
-                    <div onclick="window.location.href='solicitar.html'" class="plus-button">
+                    <div id="centerButton" class="plus-button">
                         <i class="fa-solid fa-plus text-black"></i>
                     </div>
                 </div>
-                <div class="tab-item" onclick="window.location.href='mensajes.html'">
+                <div class="tab-item" onclick="safeRedirect('mensajes')">
                     <i class="fa-solid fa-comment text-xl"></i>
                     <span class="text-[8px] font-black uppercase italic">Chat</span>
                 </div>
-                <div class="tab-item" onclick="window.location.href='comunidad.html'">
-                    <i class="fa-solid fa-users text-xl"></i>
-                    <span class="text-[8px] font-black uppercase italic">Pros</span>
+                <div class="tab-item" onclick="safeRedirect('perfil')">
+                    <i class="fa-solid fa-user text-xl"></i>
+                    <span class="text-[8px] font-black uppercase italic">Perfil</span>
                 </div>
             </nav>
         </div>
@@ -110,108 +90,152 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        const SUPABASE_URL = 'https://thjzjwyosyxsgjfcignp.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_ugM18BI_W0G-pu-mY-0a7g_omiUa7rT';
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
+        const _supabase = supabase.createClient('https://thjzjwyosyxsgjfcignp.supabase.co', 'sb_publishable_ugM18BI_W0G-pu-mY-0a7g_omiUa7rT');
         let isVerified = false;
+        let isBlocked = false;
+        let myAppsGlobal = [];
+        const myPhone = localStorage.getItem('userPhone');
 
         async function initMarketplace() {
-            const phone = localStorage.getItem('userPhone');
             const badge = document.getElementById('statusBadge');
-            const profileTrigger = document.getElementById('profileTrigger');
+            const centerBtn = document.getElementById('centerButton');
 
-            if (!phone) {
-                badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span><span class="text-slate-500 text-[8px] font-black uppercase tracking-widest italic">Invitado</span>';
+            if (!myPhone) {
+                badge.innerHTML = '<span class="text-slate-500 text-[8px] font-black uppercase italic tracking-widest">Invitado</span>';
+                centerBtn.onclick = () => window.location.href = 'login.html';
                 loadMarket();
                 return;
             }
 
-            try {
-                const { data: profile } = await supabaseClient
-                    .from('profiles')
-                    .select('verification_status, avatar_url')
-                    .eq('phone', phone)
-                    .single();
-
-                if (profile) {
-                    // Si l'utilisateur a une photo, on remplace le bonhomme par sa photo
-                    if (profile.avatar_url) {
-                        profileTrigger.innerHTML = `<img src="${profile.avatar_url}" class="w-full h-full object-cover rounded-xl">`;
-                    }
-                    
-                    if (profile.verification_status === 'verified') {
-                        isVerified = true;
-                        badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-green-500"></span><span class="text-green-500 text-[8px] font-black uppercase tracking-widest italic">Pro Verificado</span>';
-                    } else {
-                        badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-orange-500/50"></span><span class="text-orange-500/50 text-[8px] font-black uppercase tracking-widest italic">En espera</span>';
-                    }
-                } else {
-                    badge.innerHTML = '<span class="text-slate-500 text-[8px] font-black uppercase italic">Invitado</span>';
-                }
-            } catch (err) {
-                badge.innerHTML = '<span class="text-red-500 text-[8px] font-black uppercase italic">Offline</span>';
-            }
+            const { data: user } = await _supabase.from('users').select('*').eq('phone', myPhone).maybeSingle();
             
+            if (user) {
+                isVerified = true; 
+                // GESTIÓN DEL BOTÓN CENTRAL SEGÚN ROL (ORANGE)
+                if (user.role === 'pro' || user.role === 'jobber') {
+                    centerBtn.innerHTML = '<i class="fa-solid fa-list-check text-black"></i>';
+                    centerBtn.onclick = () => safeRedirect('mis-trabajos-pro');
+                } else {
+                    centerBtn.innerHTML = '<i class="fa-solid fa-plus text-black"></i>';
+                    centerBtn.onclick = () => safeRedirect('solicitar');
+                }
+
+                // BLOQUEO POR DEUDA
+                const currentBalance = user.balance || 0;
+                const currentLimit = user.max_debt || -500;
+                if (currentBalance <= currentLimit) {
+                    isBlocked = true;
+                    document.getElementById('blockBanner').classList.remove('hidden');
+                    badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-red-500"></span><span class="text-red-500 text-[8px] font-black uppercase tracking-widest italic">Acceso Restringido</span>';
+                } else {
+                    badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-green-500"></span><span class="text-green-500 text-[8px] font-black uppercase tracking-widest italic">Pro Conectado</span>';
+                }
+            }
             loadMarket();
         }
 
         async function loadMarket() {
             const list = document.getElementById('marketList');
-            const { data, error } = await supabaseClient
-                .from('missions')
-                .select('*')
-                .eq('status', 'open')
-                .order('created_at', { ascending: false });
+            const { data: jobs, error } = await _supabase.from('jobs').select('*').in('status', ['open', 'accepted']).order('created_at', { ascending: false });
+            
+            if (myPhone) {
+                const { data: apps } = await _supabase.from('applications').select('*').eq('pro_phone', myPhone);
+                myAppsGlobal = apps || [];
+            }
 
             if (error) {
-                list.innerHTML = `<p class="text-center text-red-500 text-[10px] font-black uppercase py-10">Error de conexión</p>`;
+                list.innerHTML = `<p class="text-center text-red-500 text-[10px] font-black py-10">Error de conexión</p>`;
                 return;
             }
 
-            if (!data || data.length === 0) {
-                list.innerHTML = `
-                    <div class="py-20 text-center glass-card border-dashed bg-transparent opacity-30 mx-2">
-                        <i class="fa-solid fa-wind text-2xl mb-4 block"></i>
-                        <p class="uppercase font-black text-[9px] tracking-[0.2em]">No hay chambas disponibles</p>
-                    </div>`;
+            const acceptedJobs = [];
+            const otherJobs = [];
+
+            jobs.forEach(j => {
+                const myApp = myAppsGlobal.find(a => a.job_id === j.id);
+                if (myApp && (myApp.status === 'accepted' || myApp.status === 'pro_finished')) {
+                    acceptedJobs.push(j);
+                } else if (j.status === 'open') {
+                    otherJobs.push(j);
+                }
+            });
+
+            if (acceptedJobs.length === 0 && otherJobs.length === 0) {
+                list.innerHTML = `<div class="py-20 text-center opacity-30"><i class="fa-solid fa-wind text-2xl mb-4 block"></i><p class="uppercase font-black text-[9px] tracking-[0.2em]">No hay chambas</p></div>`;
                 return;
             }
 
-            list.innerHTML = data.map(m => {
-                const btnClass = isVerified ? 'bg-orange-500 text-black' : 'btn-disabled';
-                const btnText = isVerified ? 'Aceptar Chamba ⚡' : 'Solo Verificados';
-                const action = isVerified ? `onclick="aceptarChamba('${m.id}')"` : '';
-
-                return `
-                <div class="glass-card p-6 pop-in shadow-xl">
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="flex flex-col">
-                            <span class="text-[7px] font-black uppercase text-slate-600 tracking-widest italic mb-1">ID #${m.id.slice(0,5)}</span>
-                            <span class="text-2xl font-black italic text-white tracking-tighter">$${m.price}</span>
-                        </div>
-                        <div class="w-10 h-10 bg-white/5 rounded-xl border border-white/5 flex items-center justify-center">
-                            <i class="fa-solid fa-bolt-lightning ${isVerified ? 'text-orange-500' : 'text-slate-700'}"></i>
-                        </div>
-                    </div>
-                    <p class="text-sm font-bold text-slate-400 italic mb-6 leading-snug">"${m.description}"</p>
-                    <button ${action} class="w-full ${btnClass} py-4 rounded-2xl font-black uppercase text-[10px] active:scale-95 transition-all tracking-widest">
-                        ${btnText}
-                    </button>
-                </div>
-                `;
-            }).join('');
+            let html = "";
+            if (acceptedJobs.length > 0) {
+                html += `<div class="section-title">Mis Trabajos Activos</div>`;
+                acceptedJobs.forEach(j => html += renderCard(j, true));
+            }
+            if (otherJobs.length > 0) {
+                html += `<div class="section-title mt-8">Chambas Disponibles</div>`;
+                otherJobs.forEach(j => html += renderCard(j, false));
+            }
+            list.innerHTML = html;
         }
 
-        async function aceptarChamba(id) {
-            if (!isVerified) return;
-            const proPhone = localStorage.getItem('userPhone');
-            const proName = localStorage.getItem('userName');
-            const { error } = await supabaseClient.from('missions').update({ 
-                status: 'in_progress', pro_name: proName, pro_phone: proPhone 
-            }).eq('id', id);
-            if (error) alert("Error: " + error.message);
-            else window.location.href = 'dashboard-pro.html';
+        function renderCard(j, isAccepted) {
+            const myApp = myAppsGlobal.find(a => a.job_id === j.id);
+            let btnHtml = "";
+
+            if (isAccepted) {
+                if (myApp && myApp.status === 'pro_finished') {
+                    btnHtml = `<button class="w-full bg-white/5 text-orange-500 border border-orange-500/20 py-4 rounded-2xl font-black uppercase text-[10px] cursor-not-allowed flex items-center justify-center gap-2"><i class="fa-solid fa-clock animate-spin"></i> Esperando validación</button>`;
+                } else {
+                    btnHtml = `<div class="flex gap-2">
+                        <button onclick="safeRedirect('chat?jobId=${j.id}')" class="flex-1 bg-white/10 text-white py-4 rounded-2xl font-black uppercase text-[10px] border border-white/10 active:scale-95 transition-all">CHAT</button>
+                        <button onclick="finalizarChamba('${j.id}')" class="flex-[1.5] bg-orange-500 text-black py-4 rounded-2xl font-black uppercase text-[10px] shadow-lg shadow-orange-500/20 active:scale-95 transition-all">Finalizar ✅</button>
+                    </div>`;
+                }
+            } else if (myApp) {
+                btnHtml = `<button class="w-full bg-white/5 text-slate-500 border border-white/5 py-4 rounded-2xl font-black uppercase text-[10px] cursor-not-allowed italic">Esperando... ⏳</button>`;
+            } else {
+                if (isBlocked) {
+                    btnHtml = `<button onclick="safeRedirect('perfil')" class="w-full bg-red-500/10 text-red-500 border border-red-500/20 py-4 rounded-2xl font-black uppercase text-[10px] italic">Pagar comisión para postular</button>`;
+                } else {
+                    const action = isVerified ? `onclick="postularChamba('${j.id}')"` : `onclick="alert('Debes ser un Pro verificado')"`;
+                    btnHtml = `<button id="btn-${j.id}" ${action} class="w-full bg-orange-500 text-black py-4 rounded-2xl font-black uppercase text-[10px] shadow-lg shadow-orange-500/20 active:scale-95 transition-all">Postular ahora ⚡</button>`;
+                }
+            }
+
+            return `<div class="glass-card p-6 pop-in mb-4 ${isAccepted ? 'border-orange-500/30 bg-orange-500/5' : ''}">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="flex flex-col">
+                        <span class="text-[7px] font-black uppercase text-slate-600 tracking-widest italic mb-1">${j.category || 'GENERAL'}</span>
+                        <span class="text-2xl font-black italic text-white tracking-tighter">$${j.total_price}</span>
+                    </div>
+                    <div class="w-10 h-10 ${isAccepted ? 'bg-orange-500 text-black' : 'bg-orange-500/10 text-orange-500'} rounded-xl flex items-center justify-center">
+                        <i class="fa-solid ${isAccepted ? 'fa-hammer' : 'fa-bolt-lightning'} text-xs"></i>
+                    </div>
+                </div>
+                <h3 class="text-xs font-black uppercase text-white mb-2 italic">${j.title}</h3>
+                <p class="text-[11px] font-bold text-slate-400 italic mb-6 line-clamp-2">${j.description}</p>
+                ${btnHtml}
+            </div>`;
+        }
+
+        async function postularChamba(jobId) {
+            if (isBlocked) return alert("Tu cuenta está bloqueada por deuda.");
+            const proName = localStorage.getItem('userName') || "Un Pro";
+            const btn = document.getElementById('btn-' + jobId);
+            if (btn) { btn.disabled = true; btn.innerText = "..."; }
+            
+            const { error } = await _supabase.from('applications').insert([{ job_id: jobId, pro_phone: myPhone, pro_name: proName, status: 'pending' }]);
+            if (!error) { alert("¡Postulación enviada!"); loadMarket(); } 
+            else { alert("Error al postular"); if (btn) { btn.disabled = false; btn.innerText = "Postular ahora ⚡"; }}
+        }
+
+        async function finalizarChamba(jobId) {
+            if (!confirm("¿Confirmas que terminaste?")) return;
+            const { error } = await _supabase.from('applications').update({ status: 'pro_finished' }).eq('job_id', jobId).eq('pro_phone', myPhone);
+            if (!error) { alert("¡Enviado!"); loadMarket(); }
+        }
+
+        async function safeRedirect(target) {
+            window.location.href = target + '.html';
         }
 
         window.onload = initMarketplace;
