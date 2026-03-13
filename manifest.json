@@ -1,0 +1,16 @@
+{
+  "name": "CHAMBA GO",
+  "short_name": "CHAMBA",
+  "description": "Conecta con profesionales al instante",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#f97316",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3062/3062411.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
