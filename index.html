@@ -43,9 +43,33 @@
 
         <main id="mainContent" class="flex-1 overflow-y-auto px-6 pb-44 no-scrollbar">
             
-            <div id="visitorUI" class="hidden py-20 text-center space-y-4">
-                <i class="fa-solid fa-circle-notch animate-spin text-orange-500 text-3xl"></i>
-                <p class="text-xs font-black uppercase text-slate-500 tracking-widest">Sincronizando con la red...</p>
+            <div id="visitorUI" class="hidden pt-10 space-y-10">
+                <div class="text-center space-y-2">
+                    <h2 class="text-4xl font-black italic uppercase tracking-tighter leading-none">BIENVENIDO A<br><span class="text-orange-500">CHAMBA GO</span></h2>
+                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">La red de servicios más rápida</p>
+                </div>
+
+                <div class="grid gap-4">
+                    <div onclick="location.href='login.html'" class="cat-card p-6 flex items-center gap-6 border-l-4 border-orange-500 active:scale-95 transition-transform cursor-pointer">
+                        <div class="w-12 h-12 bg-orange-500 rounded-2xl flex items-center justify-center text-black text-xl">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-black italic uppercase text-sm">Busco un servicio</h3>
+                            <p class="text-[10px] text-slate-500 font-bold uppercase">Encuentra expertos ahora</p>
+                        </div>
+                    </div>
+
+                    <div onclick="location.href='registro-pro.html'" class="cat-card p-6 flex items-center gap-6 border-l-4 border-white active:scale-95 transition-transform cursor-pointer">
+                        <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-white text-xl">
+                            <i class="fa-solid fa-briefcase"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-black italic uppercase text-sm">Soy un profesional</h3>
+                            <p class="text-[10px] text-slate-500 font-bold uppercase">Empieza a ganar dinero</p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div id="clientUI" class="hidden space-y-8 pt-6">
@@ -83,13 +107,10 @@
                         </div>
                         <span id="gaugeLabel" class="text-xs font-black text-orange-500 italic">$0 / $500</span>
                     </div>
-                    
                     <div class="progress-container">
                         <div id="commissionGauge" class="progress-bar" style="width: 0%"></div>
                     </div>
-                    
                     <p id="alertMessage" class="text-[9px] text-slate-400 font-bold uppercase mt-2 leading-tight"></p>
-
                     <button id="payButton" onclick="location.href='pagar-comision.html'" class="w-full mt-4 bg-orange-500 text-black font-black uppercase italic py-4 rounded-2xl text-[11px] shadow-lg transition-all active:scale-95">
                         Pagar comisión ahora
                     </button>
@@ -104,11 +125,24 @@
 
         <div class="tab-bar-wrapper">
             <nav class="tab-bar">
-                <div class="tab-item active" onclick="location.href='index.html'"><i class="fa-solid fa-house text-xl"></i><span class="text-[8px] font-black uppercase italic mt-1">Inicio</span></div>
+                <div class="tab-item active" onclick="location.href='index.html'">
+                    <i class="fa-solid fa-house text-xl"></i>
+                    <span class="text-[8px] font-black uppercase italic mt-1">Inicio</span>
+                </div>
                 <div id="dynamicNavBtn" class="tab-item"></div>
-                <div class="relative flex justify-center items-center"><div id="centerButton" class="plus-button"></div></div>
-                <div class="tab-item" onclick="location.href='mensajes.html'"><i class="fa-solid fa-comment text-xl"></i><span class="text-[8px] font-black uppercase italic mt-1">Chat</span></div>
-                <div class="tab-item" onclick="location.href='perfil.html'"><i class="fa-solid fa-user text-xl"></i><span class="text-[8px] font-black uppercase italic mt-1">Perfil</span></div>
+                
+                <div class="relative flex justify-center items-center">
+                    <div id="centerButton" class="plus-button"></div>
+                </div>
+                
+                <div class="tab-item" onclick="location.href='mensajes.html'">
+                    <i class="fa-solid fa-comment text-xl"></i>
+                    <span class="text-[8px] font-black uppercase italic mt-1">Chat</span>
+                </div>
+                <div class="tab-item" onclick="location.href='perfil.html'">
+                    <i class="fa-solid fa-user text-xl"></i>
+                    <span class="text-[8px] font-black uppercase italic mt-1">Perfil</span>
+                </div>
             </nav>
         </div>
     </div>
@@ -137,49 +171,16 @@
 
         function setupPro(user) {
             document.getElementById('proUI').classList.remove('hidden');
-            
             const comm = user.commission_due || 0;
             const balance = user.balance || 0;
-            
-            // LOGIQUE DE PLAFOND EVOLUTIF
-            // Si le pro a déjà payé beaucoup dans le passé, on monte son plafond
             let currentLimit = 500;
             if (balance > 5000) currentLimit = 1000;
-            if (balance > 10000) currentLimit = 1500;
-            if (balance > 20000) currentLimit = 2500;
-
             const percent = Math.min((comm / currentLimit) * 100, 100);
             
             document.getElementById('realBalance').innerText = `$${balance.toFixed(2)}`;
             document.getElementById('pendingCommission').innerText = `$${comm.toFixed(2)}`;
             document.getElementById('gaugeLabel').innerText = `$${Math.floor(comm)} / $${currentLimit}`;
-            document.getElementById('limitText').innerText = `Límite actual: $${currentLimit}`;
-            
-            const gauge = document.getElementById('commissionGauge');
-            gauge.style.width = percent + '%';
-
-            const statusBadge = document.getElementById('statusBadge');
-            const payButton = document.getElementById('payButton');
-            const commCard = document.getElementById('commissionCard');
-            const alertMsg = document.getElementById('alertMessage');
-
-            if (comm >= currentLimit) {
-                // BLOCAGE
-                statusBadge.innerHTML = '<span class="w-1.5 h-1.5 bg-red-500 rounded-full animate-ping"></span> BLOQUEADO';
-                statusBadge.className = 'flex items-center gap-2 px-3 py-1.5 rounded-full text-[8px] font-black uppercase border border-red-500/50 text-red-500 bg-red-500/10';
-                commCard.classList.add('blocked-card');
-                gauge.style.background = '#ef4444';
-                payButton.className = "w-full mt-4 bg-red-600 text-white font-black uppercase italic py-4 rounded-2xl text-[11px] animate-pulse";
-                alertMsg.innerHTML = "⚠️ Has alcanzado tu límite. Paga para desbloquear trabajos.";
-                alertMsg.className = "text-[9px] text-red-500 font-black uppercase mt-2";
-            } else {
-                // ACTIF
-                statusBadge.innerHTML = '<span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span> Online';
-                statusBadge.className = 'flex items-center gap-2 px-3 py-1.5 rounded-full text-[8px] font-black uppercase border border-green-500/20 text-green-500 bg-green-500/10';
-                gauge.style.background = percent > 80 ? '#ef4444' : (percent > 50 ? '#facc15' : '#f97316');
-                alertMsg.innerText = "Mantén tu comisión baja para subir de nivel.";
-                alertMsg.className = "text-[9px] text-slate-500 font-bold uppercase mt-2";
-            }
+            document.getElementById('commissionGauge').style.width = percent + '%';
 
             renderSteps('pro');
             setNav('Market', 'fa-briefcase', 'marketplace.html', 'fa-list-check', 'mis-trabajos-pro.html');
@@ -188,13 +189,15 @@
         function setupVisitor() {
             document.getElementById('visitorUI').classList.remove('hidden');
             renderSteps('client');
+            // Pour le visiteur, le bouton centre mène au login
             setNav('Explorar', 'fa-compass', 'categorias.html', 'fa-plus', 'login.html');
         }
 
         function setupClient(user) {
             document.getElementById('clientUI').classList.remove('hidden');
             renderSteps('client');
-            setNav('Chambas', 'fa-receipt', 'mis-chambas.html', 'fa-plus', 'solicitar.html');
+            // ICI: On met bien le label "Chambas" et l'icône list-check
+            setNav('Chambas', 'fa-list-check', 'mis_chambas.html', 'fa-plus', 'solicitar.html');
         }
 
         function renderSteps(mode) {
@@ -204,7 +207,7 @@
                 [{t:'Pide', d:'Publica gratis.'}, {t:'Elige', d:'Compara pros.'}];
 
             document.getElementById('infoTitle').innerText = isPro ? '¿CÓMO GANAR?' : '¿CÓMO FUNCIONA?';
-            document.getElementById('infoSteps').innerHTML = steps.map((s, i) => `
+            document.getElementById('infoSteps').innerHTML = steps.map((s) => `
                 <div class="cat-card p-5 relative border-l-4 border-orange-500">
                     <h4 class="text-xs font-black uppercase italic text-white">${s.t}</h4>
                     <p class="text-[10px] text-slate-400 font-bold uppercase">${s.d}</p>
@@ -212,7 +215,12 @@
         }
 
         function setNav(label, icon, link, centerIcon, centerLink) {
-            document.getElementById('dynamicNavBtn').innerHTML = `<div onclick="location.href='${link}'" class="flex flex-col items-center"><i class="fa-solid ${icon} text-xl"></i><span class="text-[8px] font-black uppercase italic mt-1">${label}</span></div>`;
+            // Mise à jour dynamique de l'onglet 2 et du bouton central
+            document.getElementById('dynamicNavBtn').innerHTML = `
+                <div onclick="location.href='${link}'" class="flex flex-col items-center">
+                    <i class="fa-solid ${icon} text-xl"></i>
+                    <span class="text-[8px] font-black uppercase italic mt-1">${label}</span>
+                </div>`;
             document.getElementById('centerButton').innerHTML = `<i class="fa-solid ${centerIcon}"></i>`;
             document.getElementById('centerButton').onclick = () => location.href = centerLink;
         }
