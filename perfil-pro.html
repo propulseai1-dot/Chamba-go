@@ -10,17 +10,23 @@
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
         :root { --main-orange: #f97316; }
         body { background-color: #020617; font-family: 'Plus Jakarta Sans', sans-serif; color: white; margin: 0; }
-        .app-container { width: 100%; max-width: 450px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
+        .app-container { width: 100%; max-width: 450px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; position: relative; }
         .glass { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(10px); }
         .profile-header { height: 280px; position: relative; background-size: cover; background-position: center; border-radius: 0 0 40px 40px; }
         .profile-header::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, transparent, #020617); border-radius: 0 0 40px 40px; }
         .avatar-circle { width: 120px; height: 120px; border-radius: 40px; border: 4px solid #020617; object-fit: cover; position: relative; z-index: 20; margin-top: -60px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
         
-        /* Style pour le badge de confiance */
         .trust-badge { background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0.02) 100%); border: 1px dashed rgba(59, 130, 246, 0.3); border-radius: 24px; padding: 20px; display: flex; align-items: center; gap: 15px; }
         
         .btn-main { background: var(--main-orange); color: black; font-weight: 900; border-radius: 22px; padding: 20px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; text-transform: uppercase; font-style: italic; transition: all 0.2s; box-shadow: 0 10px 20px rgba(249, 115, 22, 0.2); }
         .btn-main:active { transform: scale(0.96); }
+
+        /* TAB BAR STYLES */
+        .tab-bar-wrapper { position: fixed; bottom: 15px; width: 100%; max-width: 450px; padding: 0 15px; z-index: 1000; left: 50%; transform: translateX(-50%); }
+        .tab-bar { width: 100%; height: 75px; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.08); border-radius: 25px; display: grid; grid-template-columns: repeat(5, 1fr); align-items: center; box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
+        .tab-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: #64748b; cursor: pointer; }
+        .tab-item.active { color: var(--main-orange); }
+        .plus-button { position: absolute; top: -28px; left: 50%; transform: translateX(-50%); width: 58px; height: 58px; background: var(--main-orange); border-radius: 20px; display: flex; align-items: center; justify-content: center; color: #000; font-size: 22px; border: 5px solid #020617; box-shadow: 0 10px 20px rgba(249, 115, 22, 0.3); z-index: 1100; }
     </style>
 </head>
 <body class="h-full">
@@ -36,7 +42,6 @@
 
         <div class="flex flex-col items-center px-6">
             <img id="proAvatar" src="" class="avatar-circle glass bg-slate-800" alt="Pro">
-            
             <h1 id="proName" class="text-3xl font-black italic uppercase mt-4 tracking-tighter text-center">---</h1>
             <p id="proCategory" class="text-orange-500 font-black uppercase text-[10px] tracking-[0.3em] mt-1 italic">Cargando...</p>
 
@@ -57,13 +62,21 @@
 
             <div class="w-full mt-8">
                 <h3 class="text-[10px] font-black uppercase text-slate-500 mb-2 italic">Sobre el profesional</h3>
-                <p id="proBio" class="text-slate-400 text-xs leading-relaxed font-medium">
-                    Cargando información del profesional...
-                </p>
+                <p id="proBio" class="text-slate-400 text-xs leading-relaxed font-medium">Cargando...</p>
             </div>
 
-            <div id="actionSection" class="w-full mt-10 mb-20">
+            <div id="actionSection" class="w-full mt-10 mb-32">
                 </div>
+        </div>
+
+        <div class="tab-bar-wrapper">
+            <nav class="tab-bar">
+                <div class="tab-item" onclick="window.location.href='index.html'"><i class="fa-solid fa-house text-xl"></i><span class="text-[8px] font-black uppercase italic mt-1">Inicio</span></div>
+                <div id="dynamicNavBtn" class="tab-item"></div>
+                <div class="relative flex justify-center items-center"><div id="centerButton" class="plus-button"><i class="fa-solid fa-plus text-black"></i></div></div>
+                <div class="tab-item" onclick="window.location.href='mensajes.html'"><i class="fa-solid fa-comment text-xl"></i><span class="text-[8px] font-black uppercase italic mt-1">Chat</span></div>
+                <div class="tab-item active" onclick="window.location.href='comunidad.html'"><i class="fa-solid fa-users text-xl"></i><span class="text-[8px] font-black uppercase italic mt-1">Pros</span></div>
+            </nav>
         </div>
     </div>
 
@@ -71,73 +84,63 @@
     <script>
         const _supabase = supabase.createClient('https://thjzjwyosyxsgjfcignp.supabase.co', 'sb_publishable_ugM18BI_W0G-pu-mY-0a7g_omiUa7rT');
 
-        async function loadProData() {
+        async function init() {
             const urlParams = new URLSearchParams(window.location.search);
             const proId = urlParams.get('id');
-            const myId = localStorage.getItem('userId'); // On vérifie si l'utilisateur est connecté
+            const myId = localStorage.getItem('userId');
+            
+            updateNavigation(); // Mise à jour de la barre du bas
+            if (proId) loadProData(proId, myId);
+        }
 
-            if (!proId) return;
-
-            // --- GESTION DE L'AFFICHAGE SELON CONNEXION ---
+        async function loadProData(proId, myId) {
             const actionSection = document.getElementById('actionSection');
             
+            // Affichage Action selon connexion
             if (myId) {
-                // Utilisateur connecté : On affiche le bouton d'action
-                actionSection.innerHTML = `
-                    <button onclick="solicitarChamba()" class="btn-main">
-                        <i class="fa-solid fa-hammer"></i>
-                        Solicitar este Pro
-                    </button>
-                    <p class="text-[8px] text-center text-slate-600 font-bold uppercase mt-4 tracking-widest italic">
-                        Podrás chatear una vez que el pro acepte tu solicitud
-                    </p>
-                `;
+                actionSection.innerHTML = `<button onclick="solicitarChamba()" class="btn-main"><i class="fa-solid fa-hammer"></i>Solicitar este Pro</button>`;
             } else {
-                // Utilisateur NON connecté : On affiche uniquement le badge de confiance
                 actionSection.innerHTML = `
                     <div class="trust-badge">
-                        <div class="w-12 h-12 bg-blue-500/20 rounded-2xl flex items-center justify-center text-blue-500">
-                            <i class="fa-solid fa-user-check text-xl"></i>
-                        </div>
-                        <div class="flex-1">
-                            <p class="text-[10px] font-black uppercase italic text-blue-500 tracking-wider">Pro Verificado</p>
-                            <p class="text-[9px] text-slate-400 font-bold leading-tight">Este profesional ha pasado todos los filtros de seguridad de CHAMBA GO.</p>
-                        </div>
-                    </div>
-                `;
+                        <div class="w-12 h-12 bg-blue-500/20 rounded-2xl flex items-center justify-center text-blue-500"><i class="fa-solid fa-user-check text-xl"></i></div>
+                        <div class="flex-1"><p class="text-[10px] font-black uppercase italic text-blue-500 tracking-wider">Pro Verificado</p><p class="text-[9px] text-slate-400 font-bold leading-tight">Este profesional ha pasado todos los filtos de seguridad.</p></div>
+                    </div>`;
             }
 
-            // --- RÉCUPÉRATION DES DONNÉES DEPUIS SUPABASE ---
             try {
                 const { data: user, error } = await _supabase.from('users').select('*').eq('id', proId).single();
-                if (error) throw error;
-
                 if (user) {
                     document.getElementById('proName').innerText = user.name;
-                    // On affiche 'ocupacion' (si tu as créé la colonne) ou une partie du nom par défaut
                     document.getElementById('proCategory').innerText = user.ocupacion || "Especialista Pro";
-                    document.getElementById('proBio').innerText = user.bio || "Este profesional está listo para ayudarte con tu próximo proyecto.";
-                    
-                    // Gestion de l'image de profil
+                    document.getElementById('proBio').innerText = user.bio || "Listo para ayudarte.";
                     let imgUrl = user.foto ? (user.foto.startsWith('http') ? user.foto : `https://thjzjwyosyxsgjfcignp.supabase.co/storage/v1/object/public/avatars/${user.foto}`) : `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=f97316&color=000&bold=true`;
-                    
                     document.getElementById('proAvatar').src = imgUrl;
                     document.getElementById('headerPhoto').style.backgroundImage = `url('${imgUrl}')`;
                 }
-            } catch (err) { 
-                console.error(err); 
-                document.getElementById('proBio').innerText = "Error al cargar el perfil.";
+            } catch (err) { console.error(err); }
+        }
+
+        function updateNavigation() {
+            const dynamicBtn = document.getElementById('dynamicNavBtn');
+            const centerBtn = document.getElementById('centerButton');
+            const isPro = localStorage.getItem('userRole') === 'pro';
+            if (isPro) {
+                dynamicBtn.innerHTML = '<i class="fa-solid fa-briefcase text-xl"></i><span class="text-[8px] font-black uppercase italic mt-1">Chambas</span>';
+                dynamicBtn.onclick = () => window.location.href='marketplace.html';
+                centerBtn.onclick = () => window.location.href='mis-trabajos-pro.html';
+            } else {
+                dynamicBtn.innerHTML = '<i class="fa-solid fa-compass text-xl"></i><span class="text-[8px] font-black uppercase italic mt-1">Explorar</span>';
+                dynamicBtn.onclick = () => window.location.href='categorias.html';
+                centerBtn.onclick = () => window.location.href='crear-mision.html';
             }
         }
 
         function solicitarChamba() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const proId = urlParams.get('id');
-            // Redirection vers la page de création de mission
+            const proId = new URLSearchParams(window.location.search).get('id');
             window.location.href = `crear-mision.html?proId=${proId}`;
         }
 
-        window.onload = loadProData;
+        window.onload = init;
     </script>
 </body>
 </html>
