@@ -3,199 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>CHAMBA GO | Pros Cerca</title>
-    
+    <title>CHAMBA GO | Categorías</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
-        :root { --main-orange: #f97316; --bg-dark: #020617; }
-
+        :root { --main-orange: #f97316; }
         body { background-color: #020617; font-family: 'Plus Jakarta Sans', sans-serif; color: white; margin: 0; }
-
-        .app-container {
-            width: 100%; max-width: 450px; margin: 0 auto;
-            position: relative; min-height: 100vh;
-            display: flex; flex-direction: column; background: #020617;
-        }
-
-        /* --- BLOC NAVIGATION UNIFIÉ --- */
-        .tab-bar-wrapper { 
-            position: fixed; bottom: 15px; width: 100%; max-width: 450px; 
-            padding: 0 15px; z-index: 1000; left: 50%; transform: translateX(-50%);
-        }
-
-        .tab-bar { 
-            width: 100%; height: 75px; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.08); border-radius: 25px; 
-            display: grid; grid-template-columns: repeat(5, 1fr); 
-            align-items: center; box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-            position: relative;
-        }
-
-        .tab-item { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #64748b; cursor: pointer; transition: all 0.3s; }
+        .app-container { width: 100%; max-width: 450px; margin: 0 auto; position: relative; min-height: 100vh; display: flex; flex-direction: column; background: #020617; }
+        .tab-bar-wrapper { position: fixed; bottom: 15px; width: 100%; max-width: 450px; padding: 0 15px; z-index: 1000; left: 50%; transform: translateX(-50%); }
+        .tab-bar { width: 100%; height: 75px; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.08); border-radius: 25px; display: grid; grid-template-columns: repeat(5, 1fr); align-items: center; box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
+        .tab-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: #64748b; cursor: pointer; height: 100%; }
         .tab-item.active { color: var(--main-orange); }
-
-        .plus-button {
-            position: absolute; top: -28px; left: 50%; transform: translateX(-50%);
-            width: 58px; height: 58px; background: var(--main-orange); border-radius: 20px;
-            display: flex; align-items: center; justify-content: center; 
-            color: #000; font-size: 22px; border: 5px solid #020617;
-            box-shadow: 0 10px 20px rgba(249, 115, 22, 0.3); z-index: 1100;
-        }
-
-        .glass-card {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 2rem;
-        }
-
-        .selfie-avatar {
-            width: 64px; height: 64px; border-radius: 18px;
-            object-fit: cover; border: 1px solid rgba(255,255,255,0.1);
-        }
-
+        .plus-button { position: absolute; top: -28px; left: 50%; transform: translateX(-50%); width: 58px; height: 58px; background: var(--main-orange); border-radius: 20px; display: flex; align-items: center; justify-content: center; color: #000; font-size: 22px; border: 5px solid #020617; box-shadow: 0 10px 20px rgba(249, 115, 22, 0.3); z-index: 1100; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        .hero-mesh { background-image: radial-gradient(at 0% 0%, rgba(249, 115, 22, 0.1) 0, transparent 50%), radial-gradient(at 100% 0%, rgba(249, 115, 22, 0.05) 0, transparent 50%); }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .fade-in { animation: fadeIn 0.4s ease forwards; }
     </style>
 </head>
 <body class="h-full bg-black">
-
-    <div class="app-container hero-mesh">
-
+    <div class="app-container">
         <header class="px-6 pt-12 pb-6 flex items-center justify-between sticky top-0 z-50 backdrop-blur-md bg-slate-950/50">
             <div class="flex items-center gap-4">
-                <div onclick="window.location.href='index.html'" class="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center cursor-pointer active:scale-90 transition-transform">
+                <div onclick="window.history.back()" class="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center cursor-pointer active:scale-90 transition-transform">
                     <i class="fa-solid fa-arrow-left text-xs text-white"></i>
                 </div>
-                <h1 class="text-2xl font-black italic tracking-tighter uppercase text-white">PROS <span class="text-orange-500">CERCA</span></h1>
-            </div>
-            <div class="flex items-center gap-2 bg-orange-500/10 px-3 py-1.5 rounded-full border border-orange-500/20">
-                <span class="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></span>
-                <span class="text-[9px] font-black text-white uppercase tracking-widest">Live</span>
+                <h1 class="text-2xl font-black italic tracking-tighter uppercase text-white">EXPLORAR <span class="text-orange-500">CATEGORÍAS</span></h1>
             </div>
         </header>
 
         <main class="flex-1 overflow-y-auto px-6 pb-44 no-scrollbar">
-            <div class="relative mt-4 mb-8">
-                <i class="fa-solid fa-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
-                <input id="searchInput" type="text" placeholder="BUSCAR POR NOMBRE O OFICIO..." class="w-full bg-white/5 border border-white/10 rounded-2xl py-5 pl-14 pr-4 text-[11px] font-black uppercase text-white focus:border-orange-500/50 outline-none transition-all placeholder:text-slate-600">
-            </div>
-
-            <div id="prosList" class="space-y-4">
-                </div>
-        </main>
+            </main>
 
         <div class="tab-bar-wrapper">
             <nav class="tab-bar">
-                <div class="tab-item" onclick="window.location.href='index.html'">
-                    <i class="fa-solid fa-house text-xl"></i>
-                    <span class="text-[8px] font-black uppercase italic">Inicio</span>
-                </div>
-                
+                <div class="tab-item" onclick="window.location.href='index.html'"><i class="fa-solid fa-house text-xl"></i><span class="text-[8px] font-black uppercase italic mt-1">Inicio</span></div>
                 <div id="dynamicNavBtn" class="tab-item"></div>
-                
-                <div class="relative flex justify-center items-center">
-                    <div onclick="window.location.href='solicitar.html'" class="plus-button">
-                        <i class="fa-solid fa-plus text-black"></i>
-                    </div>
-                </div>
-
-                <div class="tab-item" onclick="window.location.href='mensajes.html'">
-                    <i class="fa-solid fa-comment text-xl"></i>
-                    <span class="text-[8px] font-black uppercase italic">Chat</span>
-                </div>
-                
-                <div class="tab-item active" onclick="window.location.href='comunidad.html'">
-                    <i class="fa-solid fa-users text-xl"></i>
-                    <span class="text-[8px] font-black uppercase italic">Pros</span>
-                </div>
+                <div class="relative flex justify-center items-center"><div id="centerButton" class="plus-button"><i class="fa-solid fa-plus text-black"></i></div></div>
+                <div class="tab-item" onclick="window.location.href='mensajes.html'"><i class="fa-solid fa-comment text-xl"></i><span class="text-[8px] font-black uppercase italic mt-1">Chat</span></div>
+                <div class="tab-item" onclick="window.location.href='comunidad.html'"><i class="fa-solid fa-users text-xl"></i><span class="text-[8px] font-black uppercase italic mt-1">Pros</span></div>
             </nav>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        const _supabase = supabase.createClient('https://thjzjwyosyxsgjfcignp.supabase.co', 'sb_publishable_ugM18BI_W0G-pu-mY-0a7g_omiUa7rT');
-        let allPros = []; // Stockage local pour la recherche rapide
-
-        async function fetchPros() {
-            try {
-                const { data, error } = await _supabase
-                    .from('users')
-                    .select('*')
-                    .eq('role', 'pro')
-                    .order('name', { ascending: true });
-
-                if (error) throw error;
-                allPros = data;
-                renderPros(allPros);
-            } catch (err) {
-                console.error("Error fetching pros:", err);
-            }
-        }
-
-        function renderPros(pros) {
-            const list = document.getElementById('prosList');
-            list.innerHTML = pros.map((pro, index) => {
-                const avatar = pro.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(pro.name)}&background=0f172a&color=f97316&bold=true`;
-                return `
-                    <div onclick="window.location.href='chat.html?target=${pro.phone}'" class="glass-card p-5 flex items-center gap-4 cursor-pointer active:scale-95 transition-all fade-in" style="animation-delay: ${index * 0.05}s">
-                        <div class="relative flex-shrink-0">
-                            <img src="${avatar}" class="selfie-avatar" alt="${pro.name}">
-                            <div class="absolute -bottom-1 -right-1 bg-orange-500 text-black text-[9px] w-6 h-6 flex items-center justify-center rounded-full border-[3px] border-[#020617]">
-                                <i class="fa-solid fa-check"></i>
-                            </div>
-                        </div>
-                        <div class="flex-1">
-                            <div class="flex justify-between items-start">
-                                <h3 class="text-[13px] font-black text-white uppercase tracking-tighter italic">${pro.name}</h3>
-                                <span class="text-[9px] font-black text-orange-500 uppercase tracking-widest">${pro.location || 'Tulum'}</span>
-                            </div>
-                            <p class="text-[11px] text-slate-400 font-bold uppercase mt-1 italic">${pro.category || 'Especialista'}</p>
-                            <div class="flex items-center gap-3 mt-2">
-                                <div class="flex items-center gap-1 text-orange-500">
-                                    <i class="fa-solid fa-star text-[9px]"></i>
-                                    <span class="text-[10px] font-black">5.0</span>
-                                </div>
-                                <span class="text-slate-800 text-[10px] font-black">•</span>
-                                <span class="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">Verificado</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
         function updateNavigation() {
             const dynamicBtn = document.getElementById('dynamicNavBtn');
+            const centerBtn = document.getElementById('centerButton');
             const isPro = localStorage.getItem('userRole') === 'pro';
-            dynamicBtn.innerHTML = isPro 
-                ? `<div onclick="window.location.href='marketplace.html'" class="flex flex-col items-center"><i class="fa-solid fa-briefcase text-xl"></i><span class="text-[8px] font-black uppercase italic">Chambas</span></div>`
-                : `<div onclick="window.location.href='categorias.html'" class="flex flex-col items-center"><i class="fa-solid fa-compass text-xl"></i><span class="text-[8px] font-black uppercase italic">Explorar</span></div>`;
+
+            if (isPro) {
+                dynamicBtn.classList.remove('active');
+                dynamicBtn.onclick = () => window.location.href='marketplace.html';
+                dynamicBtn.innerHTML = '<i class="fa-solid fa-briefcase text-xl"></i><span class="text-[8px] font-black uppercase italic mt-1">Chambas</span>';
+                centerBtn.onclick = () => window.location.href='mis-trabajos-pro.html';
+            } else {
+                dynamicBtn.classList.add('active');
+                dynamicBtn.onclick = () => window.location.href='categorias.html';
+                dynamicBtn.innerHTML = '<i class="fa-solid fa-compass text-xl"></i><span class="text-[8px] font-black uppercase italic mt-1">Explorar</span>';
+                centerBtn.onclick = () => window.location.href='solicitar.html';
+            }
         }
-
-        // Recherche filtrée
-        document.getElementById('searchInput').addEventListener('input', (e) => {
-            const term = e.target.value.toLowerCase();
-            const filtered = allPros.filter(pro => 
-                pro.name.toLowerCase().includes(term) || 
-                (pro.category && pro.category.toLowerCase().includes(term))
-            );
-            renderPros(filtered);
-        });
-
-        window.onload = () => {
-            updateNavigation();
-            fetchPros();
-        };
+        window.onload = updateNavigation;
     </script>
 </body>
 </html>
