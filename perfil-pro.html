@@ -15,6 +15,10 @@
         .profile-header { height: 280px; position: relative; background-size: cover; background-position: center; border-radius: 0 0 40px 40px; }
         .profile-header::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, transparent, #020617); border-radius: 0 0 40px 40px; }
         .avatar-circle { width: 120px; height: 120px; border-radius: 40px; border: 4px solid #020617; object-fit: cover; position: relative; z-index: 20; margin-top: -60px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+        
+        /* Style pour le badge de confiance */
+        .trust-badge { background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0.02) 100%); border: 1px dashed rgba(59, 130, 246, 0.3); border-radius: 24px; padding: 20px; display: flex; align-items: center; gap: 15px; }
+        
         .btn-main { background: var(--main-orange); color: black; font-weight: 900; border-radius: 22px; padding: 20px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; text-transform: uppercase; font-style: italic; transition: all 0.2s; box-shadow: 0 10px 20px rgba(249, 115, 22, 0.2); }
         .btn-main:active { transform: scale(0.96); }
     </style>
@@ -34,7 +38,7 @@
             <img id="proAvatar" src="" class="avatar-circle glass bg-slate-800" alt="Pro">
             
             <h1 id="proName" class="text-3xl font-black italic uppercase mt-4 tracking-tighter text-center">---</h1>
-            <p id="proCategory" class="text-orange-500 font-black uppercase text-[10px] tracking-[0.3em] mt-1">Profesional</p>
+            <p id="proCategory" class="text-orange-500 font-black uppercase text-[10px] tracking-[0.3em] mt-1 italic">Cargando...</p>
 
             <div class="grid grid-cols-3 gap-3 w-full mt-8">
                 <div class="glass p-4 rounded-[2rem] text-center border-white/5">
@@ -47,7 +51,7 @@
                 </div>
                 <div class="glass p-4 rounded-[2rem] text-center border-white/5">
                     <p class="text-[8px] font-black text-slate-500 uppercase italic mb-1">Garantía</p>
-                    <i class="fa-solid fa-shield-halved text-blue-500 mt-1"></i>
+                    <div class="mt-1"><i class="fa-solid fa-shield-halved text-blue-500"></i></div>
                 </div>
             </div>
 
@@ -58,15 +62,8 @@
                 </p>
             </div>
 
-            <div class="w-full mt-10 mb-20">
-                <button onclick="solicitarChamba()" class="btn-main">
-                    <i class="fa-solid fa-hammer"></i>
-                    Solicitar este Pro
-                </button>
-                <p class="text-[8px] text-center text-slate-600 font-bold uppercase mt-4 tracking-widest italic">
-                    Podrás chatear una vez que el pro acepte tu solicitud
-                </p>
-            </div>
+            <div id="actionSection" class="w-full mt-10 mb-20">
+                </div>
         </div>
     </div>
 
@@ -77,30 +74,66 @@
         async function loadProData() {
             const urlParams = new URLSearchParams(window.location.search);
             const proId = urlParams.get('id');
+            const myId = localStorage.getItem('userId'); // On vérifie si l'utilisateur est connecté
 
             if (!proId) return;
 
+            // --- GESTION DE L'AFFICHAGE SELON CONNEXION ---
+            const actionSection = document.getElementById('actionSection');
+            
+            if (myId) {
+                // Utilisateur connecté : On affiche le bouton d'action
+                actionSection.innerHTML = `
+                    <button onclick="solicitarChamba()" class="btn-main">
+                        <i class="fa-solid fa-hammer"></i>
+                        Solicitar este Pro
+                    </button>
+                    <p class="text-[8px] text-center text-slate-600 font-bold uppercase mt-4 tracking-widest italic">
+                        Podrás chatear una vez que el pro acepte tu solicitud
+                    </p>
+                `;
+            } else {
+                // Utilisateur NON connecté : On affiche uniquement le badge de confiance
+                actionSection.innerHTML = `
+                    <div class="trust-badge">
+                        <div class="w-12 h-12 bg-blue-500/20 rounded-2xl flex items-center justify-center text-blue-500">
+                            <i class="fa-solid fa-user-check text-xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-[10px] font-black uppercase italic text-blue-500 tracking-wider">Pro Verificado</p>
+                            <p class="text-[9px] text-slate-400 font-bold leading-tight">Este profesional ha pasado todos los filtros de seguridad de CHAMBA GO.</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // --- RÉCUPÉRATION DES DONNÉES DEPUIS SUPABASE ---
             try {
                 const { data: user, error } = await _supabase.from('users').select('*').eq('id', proId).single();
                 if (error) throw error;
 
                 if (user) {
                     document.getElementById('proName').innerText = user.name;
-                    document.getElementById('proCategory').innerText = user.name.split(' ')[1] || 'Especialista';
+                    // On affiche 'ocupacion' (si tu as créé la colonne) ou une partie du nom par défaut
+                    document.getElementById('proCategory').innerText = user.ocupacion || "Especialista Pro";
                     document.getElementById('proBio').innerText = user.bio || "Este profesional está listo para ayudarte con tu próximo proyecto.";
                     
+                    // Gestion de l'image de profil
                     let imgUrl = user.foto ? (user.foto.startsWith('http') ? user.foto : `https://thjzjwyosyxsgjfcignp.supabase.co/storage/v1/object/public/avatars/${user.foto}`) : `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=f97316&color=000&bold=true`;
                     
                     document.getElementById('proAvatar').src = imgUrl;
                     document.getElementById('headerPhoto').style.backgroundImage = `url('${imgUrl}')`;
                 }
-            } catch (err) { console.error(err); }
+            } catch (err) { 
+                console.error(err); 
+                document.getElementById('proBio').innerText = "Error al cargar el perfil.";
+            }
         }
 
         function solicitarChamba() {
             const urlParams = new URLSearchParams(window.location.search);
             const proId = urlParams.get('id');
-            // On redirige vers la page de création de mission avec l'ID du pro sélectionné
+            // Redirection vers la page de création de mission
             window.location.href = `crear-mision.html?proId=${proId}`;
         }
 
