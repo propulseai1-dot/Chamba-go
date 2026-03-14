@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-slate-950">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Postulantes | Chamba GO</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+        :root { --main-orange: #f97316; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #020617; color: white; margin: 0; }
+        .app-container { width: 100%; max-width: 450px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
+        .pro-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 2.5rem; }
+        
+        /* Navigation Tab Bar */
+        .tab-bar-wrapper { position: fixed; bottom: 15px; width: 100%; max-width: 450px; padding: 0 15px; z-index: 1000; left: 50%; transform: translateX(-50%); }
+        .tab-bar { width: 100%; height: 75px; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.08); border-radius: 25px; display: grid; grid-template-columns: repeat(5, 1fr); align-items: center; box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
+        .tab-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: #64748b; cursor: pointer; }
+        .tab-item.active { color: var(--main-orange); }
+        .plus-button { position: absolute; top: -30px; left: 50%; transform: translateX(-50%); width: 60px; height: 60px; background: var(--main-orange); border-radius: 20px; display: flex; align-items: center; justify-content: center; color: #000; font-size: 24px; border: 6px solid #020617; box-shadow: 0 10px 20px rgba(249, 115, 22, 0.3); }
+    </style>
+</head>
+<body class="h-full">
+
+    <div class="app-container">
+        <header class="px-6 pt-12 pb-4 flex items-center gap-4 sticky top-0 bg-slate-950/80 backdrop-blur-md z-50">
+            <button onclick="location.href='index.html'" class="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center active:scale-90 transition-transform">
+                <i class="fa-solid fa-arrow-left text-orange-500 text-xs"></i>
+            </button>
+            <h1 class="text-xl font-black uppercase italic tracking-tighter">Postulantes</h1>
+        </header>
+
+        <main id="mainContent" class="flex-1 overflow-y-auto px-6 pb-44 no-scrollbar">
+            <div id="applicantsList" class="space-y-4 pt-4">
+                <p class="text-center text-slate-500 text-xs animate-pulse">Cargando postulantes...</p>
+            </div>
+        </main>
+
+        <div class="tab-bar-wrapper">
+            <nav class="tab-bar">
+                <div class="tab-item" onclick="location.href='index.html'"><i class="fa-solid fa-house text-xl"></i></div>
+                <div class="tab-item active"><i class="fa-solid fa-users text-xl"></i></div>
+                <div class="relative"><div class="plus-button" onclick="location.href='solicitar.html'"><i class="fa-solid fa-plus text-black"></i></div></div>
+                <div class="tab-item" onclick="location.href='mensajes.html'"><i class="fa-solid fa-comment text-xl"></i></div>
+                <div class="tab-item" onclick="location.href='perfil.html'"><i class="fa-solid fa-user text-xl"></i></div>
+            </nav>
+        </div>
+    </div>
+
+    <script>
+        const _supabase = supabase.createClient('https://thjzjwyosyxsgjfcignp.supabase.co', 'sb_publishable_ugM18BI_W0G-pu-mY-0a7g_omiUa7rT');
+        const urlParams = new URLSearchParams(window.location.search);
+        const jobId = urlParams.get('jobId');
+
+        async function loadApplicants() {
+            if (!jobId) {
+                document.getElementById('applicantsList').innerHTML = `<p class="text-center text-slate-500 text-[10px] font-black pt-20">ID DE MISIÓN NO ENCONTRADO</p>`;
+                return;
+            }
+
+            // 1. Récupération des postulants
+            const { data: apps, error: appError } = await _supabase
+                .from('applications')
+                .select('*')
+                .eq('job_id', jobId);
+
+            if (appError || !apps || apps.length === 0) {
+                document.getElementById('applicantsList').innerHTML = `<p class="text-center text-slate-500 text-[10px] font-black pt-20 uppercase tracking-widest">Sin postulantes aún</p>`;
+                return;
+            }
+
+            const container = document.getElementById('applicantsList');
+            container.innerHTML = '';
+
+            // 2. Récupération des infos de chaque profil
+            for (const app of apps) {
+                const { data: user } = await _supabase
+                    .from('users')
+                    .select('full_name, rating, phone')
+                    .eq('phone', app.pro_id)
+                    .maybeSingle();
+
+                const pro = user || { full_name: "Usuario Chamba", rating: "5.0" };
+                
+                container.innerHTML += `
+                    <div class="pro-card p-6 border border-white/5 bg-white/5">
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="w-14 h-14 bg-orange-500 rounded-2xl flex items-center justify-center text-black text-2xl font-black italic">
+                                ${pro.full_name.charAt(0)}
+                            </div>
+                            <div>
+                                <h3 class="font-black uppercase italic text-white tracking-tighter text-lg leading-tight">${pro.full_name}</h3>
+                                <div class="flex items-center gap-1 text-orange-500 text-[10px] font-black uppercase">
+                                    <i class="fa-solid fa-star"></i> <span>${pro.rating || '5.0'}</span>
+                                    <span class="mx-2 text-slate-600">|</span>
+                                    <span class="text-slate-400 font-bold tracking-widest">PRO</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="acceptPro('${app.id}')" class="w-full bg-orange-500 text-black text-[11px] font-black py-4 rounded-2xl uppercase tracking-[0.1em] active:scale-95 transition-all">
+                            Seleccionar Profesional
+                        </button>
+                    </div>`;
+            }
+        }
+
+        async function acceptPro(applicationId) {
+            const btn = event.target;
+            btn.innerText = "PROCESANDO...";
+            btn.disabled = true;
+
+            try {
+                // Mise à jour du statut dans 'jobs' (SANS utiliser pro_id pour éviter l'erreur PGRST204)
+                const { error: jobError } = await _supabase
+                    .from('jobs')
+                    .update({ status: 'En progreso' })
+                    .eq('id', jobId);
+
+                if (jobError) throw jobError;
+
+                // Mise à jour du statut dans 'applications'
+                await _supabase
+                    .from('applications')
+                    .update({ status: 'Aceptado' })
+                    .eq('id', applicationId);
+
+                alert("¡Profesional seleccionado correctamente!");
+                location.href = 'index.html'; 
+
+            } catch (err) {
+                console.error("Error detallado:", err);
+                alert("Error al seleccionar: " + err.message);
+                btn.innerText = "SELECCIONAR PROFESIONAL";
+                btn.disabled = false;
+            }
+        }
+
+        window.onload = loadApplicants;
+    </script>
+</body>
+</html>
