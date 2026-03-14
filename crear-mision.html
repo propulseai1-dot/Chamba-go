@@ -2,128 +2,106 @@
 <html lang="es" class="h-full bg-slate-950">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>CHAMBA GO | Nueva Chamba</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>CHAMBA GO | Nueva Misión</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
-        :root { --main-orange: #f97316; --bg-dark: #020617; }
-        body { background-color: var(--bg-dark); font-family: 'Plus Jakarta Sans', sans-serif; color: white; margin: 0; overflow-x: hidden; }
-        .app-shell { max-width: 450px; margin: 0 auto; min-height: 100vh; background: var(--bg-dark); position: relative; display: flex; flex-direction: column; }
-        .hero-mesh { background: radial-gradient(circle at 50% -20%, #f9731615, transparent), radial-gradient(circle at 0% 50%, #0ea5e910, transparent); }
-        .glass-panel { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 2rem; }
-        input, textarea, select { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); appearance: none; }
-        input:focus, textarea:focus, select:focus { background: rgba(255, 255, 255, 0.08) !important; border-color: var(--main-orange) !important; box-shadow: 0 0 20px rgba(249, 115, 22, 0.1); }
-        .fade-in { animation: fadeIn 0.6s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        :root { --main-orange: #f97316; }
+        body { background-color: #020617; font-family: 'Plus Jakarta Sans', sans-serif; color: white; margin: 0; }
+        .glass-input { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 15px; width: 100%; color: white; outline: none; }
+        .glass-input:focus { border-color: var(--main-orange); background: rgba(255,255,255,0.05); }
     </style>
 </head>
 <body class="h-full">
 
-    <div class="app-shell hero-mesh p-6">
-        
-        <header class="py-6 flex items-center gap-4 mb-8">
-            <button onclick="history.back()" class="w-12 h-12 flex items-center justify-center bg-white/5 rounded-2xl border border-white/10 active:scale-90 transition-all">
-                <i class="fa-solid fa-chevron-left text-slate-400"></i>
+    <div class="max-w-[450px] mx-auto p-6 pb-32">
+        <header class="flex items-center gap-4 mb-8 pt-4">
+            <button onclick="window.history.back()" class="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center">
+                <i class="fa-solid fa-arrow-left text-xs"></i>
             </button>
-            <h1 class="text-xl font-black italic text-orange-500 uppercase tracking-tighter leading-none">
-                NUEVA <span class="text-white">CHAMBA</span>
-            </h1>
+            <h1 class="text-xl font-black uppercase italic italic tracking-tighter">SOLICITAR <span class="text-orange-500">SERVICIO</span></h1>
         </header>
 
-        <div class="glass-panel p-8 space-y-6 fade-in">
-            
-            <div class="space-y-3">
-                <label class="text-[10px] font-black uppercase text-slate-500 tracking-[0.2em] italic ml-2">Título de la misión</label>
-                <input type="text" id="titleInput" placeholder="Ej: Plomero urgente" 
-                    class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm text-white outline-none">
-            </div>
-
-            <div class="space-y-3">
-                <label class="text-[10px] font-black uppercase text-slate-500 tracking-[0.2em] italic ml-2">Categoría</label>
-                <div class="relative">
-                    <select id="categoryInput" class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm text-white outline-none cursor-pointer">
-                        <option value="Limpieza">Limpieza</option>
-                        <option value="Plomería">Plomería</option>
-                        <option value="Electricidad">Electricidad</option>
-                        <option value="Jardinería">Jardinería</option>
-                        <option value="Otros">Otros</option>
-                    </select>
-                    <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 text-[10px] pointer-events-none"></i>
-                </div>
-            </div>
-            
-            <div class="space-y-3">
-                <label class="text-[10px] font-black uppercase text-slate-500 tracking-[0.2em] italic ml-2">Descripción</label>
-                <textarea id="descInput" placeholder="Detalla lo que necesitas..." 
-                    class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm text-white outline-none min-h-[100px] resize-none leading-relaxed"></textarea>
-            </div>
-
-            <div class="space-y-3">
-                <label class="text-[10px] font-black uppercase text-slate-500 tracking-[0.2em] italic ml-2">Presupuesto (MXN)</label>
-                <div class="relative">
-                    <span class="absolute left-5 top-1/2 -translate-y-1/2 text-orange-500 font-black">$</span>
-                    <input type="number" id="priceInput" placeholder="500" 
-                        class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 pl-10 text-white outline-none font-black text-lg">
-                </div>
-            </div>
-
-            <div class="pt-4">
-                <button id="submitBtn" onclick="publicarMision()" class="w-full bg-orange-500 py-5 rounded-2xl shadow-2xl shadow-orange-500/30 font-black uppercase text-xs text-black active:scale-95 transition-all flex items-center justify-center gap-3">
-                    Publicar Ahora <i class="fa-solid fa-bolt text-black"></i>
-                </button>
+        <div id="targetProInfo" class="mb-8 p-4 bg-orange-500/10 border border-orange-500/20 rounded-3xl flex items-center gap-4 hidden">
+            <img id="targetAvatar" src="" class="w-12 h-12 rounded-xl object-cover">
+            <div>
+                <p class="text-[10px] font-black text-orange-500 uppercase tracking-widest">Solicitud directa para:</p>
+                <p id="targetName" class="font-black italic uppercase text-white">---</p>
             </div>
         </div>
 
-    </div> 
+        <form id="missionForm" class="space-y-6">
+            <div>
+                <label class="text-[10px] font-black uppercase text-slate-500 ml-2 mb-2 block italic">¿Qué necesitas?</label>
+                <input type="text" id="title" class="glass-input" placeholder="Ej: Reparar fuga de agua" required>
+            </div>
+
+            <div>
+                <label class="text-[10px] font-black uppercase text-slate-500 ml-2 mb-2 block italic">Detalles del trabajo</label>
+                <textarea id="description" rows="4" class="glass-input" placeholder="Describe brevemente lo que necesitas..." required></textarea>
+            </div>
+
+            <div>
+                <label class="text-[10px] font-black uppercase text-slate-500 ml-2 mb-2 block italic">Presupuesto estimado (opcional)</label>
+                <input type="number" id="budget" class="glass-input" placeholder="$0.00">
+            </div>
+
+            <button type="submit" id="submitBtn" class="w-full bg-orange-500 text-black py-5 rounded-[2rem] font-black uppercase text-xs shadow-lg shadow-orange-500/20 active:scale-95 transition-all mt-4">
+                <i class="fa-solid fa-paper-plane mr-2"></i> Enviar Solicitud
+            </button>
+        </form>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         const _supabase = supabase.createClient('https://thjzjwyosyxsgjfcignp.supabase.co', 'sb_publishable_ugM18BI_W0G-pu-mY-0a7g_omiUa7rT');
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const targetProId = urlParams.get('proId');
 
-        async function publicarMision() {
-            const btn = document.getElementById('submitBtn');
-            const title = document.getElementById('titleInput').value.trim();
-            const category = document.getElementById('categoryInput').value;
-            const desc = document.getElementById('descInput').value.trim();
-            const price = document.getElementById('priceInput').value.trim();
-            const phone = localStorage.getItem('userPhone');
-
-            if (!title || !desc || !price) {
-                alert("Por favor, llena todos los campos.");
-                return;
-            }
-
-            btn.disabled = true;
-            btn.innerHTML = "Publicando...";
-
-            try {
-                const { error } = await _supabase
-                    .from('jobs') // Changé de 'missions' à 'jobs' pour matcher le marketplace
-                    .insert([
-                        { 
-                            title: title,
-                            category: category,
-                            description: desc, 
-                            price: parseInt(price), 
-                            client_phone: phone, 
-                            status: 'open',
-                            location: 'Tulum' // Par défaut pour le test
-                        }
-                    ]);
-
-                if (error) throw error;
-
-                // Redirection vers la gestion des commandes
-                window.location.href = 'mis-pedidos.html';
-
-            } catch (err) {
-                alert("Error: " + err.message);
-                btn.disabled = false;
-                btn.innerHTML = "Publicar Ahora <i class='fa-solid fa-bolt'></i>";
+        async function initPage() {
+            if (targetProId) {
+                // Charger les infos du pro pour rassurer le client
+                const { data: pro } = await _supabase.from('users').select('name, foto').eq('id', targetProId).single();
+                if (pro) {
+                    document.getElementById('targetProInfo').classList.remove('hidden');
+                    document.getElementById('targetName').innerText = pro.name;
+                    document.getElementById('targetAvatar').src = pro.foto ? (pro.foto.startsWith('http') ? pro.foto : `https://thjzjwyosyxsgjfcignp.supabase.co/storage/v1/object/public/avatars/${pro.foto}`) : `https://ui-avatars.com/api/?name=${pro.name}`;
+                }
             }
         }
+
+        document.getElementById('missionForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerText = "Enviando...";
+
+            const myId = localStorage.getItem('userId'); // Ton ID client
+
+            const { error } = await _supabase.from('jobs').insert([{
+                client_id: myId,
+                pro_id: targetProId, // SI C'EST VIDE, C'EST POUR LE MARKETPLACE. SI REMPLI, C'EST DIRECT.
+                title: document.getElementById('title').value,
+                description: document.getElementById('description').value,
+                budget: document.getElementById('budget').value,
+                status: 'pending',
+                created_at: new Date()
+            }]);
+
+            if (error) {
+                alert("Error: " + error.message);
+                btn.disabled = false;
+                btn.innerText = "Enviar Solicitud";
+            } else {
+                alert("¡Solicitud enviada! El profesional te contactará una vez que acepte.");
+                window.location.href = 'index.html';
+            }
+        };
+
+        window.onload = initPage;
     </script>
 </body>
 </html>
