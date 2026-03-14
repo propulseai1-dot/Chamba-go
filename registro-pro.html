@@ -14,11 +14,15 @@
         :root { --main-orange: #f97316; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #020617; color: white; margin: 0; }
         .hero-mesh { background-image: radial-gradient(at 0% 0%, rgba(249, 115, 22, 0.1) 0, transparent 50%); }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
         
         .input-glass { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 1.25rem; width: 100%; padding: 1rem 1.25rem; outline: none; transition: all 0.3s; }
         .input-glass:focus { border-color: var(--main-orange); background: rgba(249, 115, 22, 0.05); }
         
+        /* Style pour le conteneur du téléphone avec préfixe solide */
+        .phone-container { position: relative; display: flex; align-items: center; }
+        .prefix { position: absolute; left: 1.25rem; font-weight: 800; color: var(--main-orange); font-style: italic; font-size: 10px; pointer-events: none; }
+        .phone-input { padding-left: 3.5rem !important; }
+
         .upload-card { border: 2px dashed rgba(255,255,255,0.1); border-radius: 1.5rem; transition: all 0.3s; cursor: pointer; position: relative; overflow: hidden; }
         .upload-card.active { border-color: var(--main-orange); background: rgba(249, 115, 22, 0.05); }
         .preview-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: none; }
@@ -44,8 +48,14 @@
         <form id="proRegisterForm" class="space-y-6">
             <div class="space-y-4">
                 <input type="text" id="fullName" placeholder="NOMBRE COMPLETO" class="input-glass text-[10px] font-black tracking-widest uppercase" required>
-                <input type="tel" id="phone" placeholder="TELÉFONO (WhatsApp)" class="input-glass text-[10px] font-black tracking-widest uppercase" required>
+                
+                <div class="phone-container">
+                    <span class="prefix">+52</span>
+                    <input type="tel" id="phone" placeholder="TELÉFONO (WhatsApp)" 
+                           maxlength="10"
+                           class="input-glass phone-input text-[10px] font-black tracking-widest uppercase" required>
                 </div>
+            </div>
 
             <hr class="border-white/5 my-8">
 
@@ -79,23 +89,19 @@
                 <i class="fa-solid fa-house text-xl"></i>
                 <span class="text-[8px] font-black uppercase italic mt-1">Inicio</span>
             </div>
-            
             <div class="tab-item" onclick="location.href='categorias.html'">
                 <i class="fa-solid fa-compass text-xl"></i>
                 <span class="text-[8px] font-black italic uppercase mt-1">Explorar</span>
             </div>
-
             <div class="relative flex justify-center items-center">
                 <div onclick="location.href='login.html'" class="plus-button">
                     <i class="fa-solid fa-plus text-black"></i>
                 </div>
             </div>
-
             <div class="tab-item" onclick="location.href='mensajes.html'">
                 <i class="fa-solid fa-comment text-xl"></i>
                 <span class="text-[8px] font-black uppercase italic mt-1">Chat</span>
             </div>
-
             <div class="tab-item" onclick="location.href='perfil.html'">
                 <i class="fa-solid fa-user text-xl"></i>
                 <span class="text-[8px] font-black uppercase italic mt-1">Perfil</span>
@@ -127,9 +133,9 @@
             btn.disabled = true;
 
             const fullName = document.getElementById('fullName').value;
-            const phone = document.getElementById('phone').value;
+            // On concatène le préfixe +52 avec le numéro saisi
+            const phone = "+52" + document.getElementById('phone').value;
             
-            // Enregistrement sans catégorie spécifique pour l'instant
             const { error } = await _supabase.from('users').upsert({
                 phone: phone,
                 full_name: fullName,
